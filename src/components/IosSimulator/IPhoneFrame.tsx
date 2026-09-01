@@ -54,11 +54,35 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
   const [isFaceIdScanning, setIsFaceIdScanning] = useState(false);
   const [isFaceIdUnlocked, setIsFaceIdUnlocked] = useState(false);
   const [showPasscodeUnlock, setShowPasscodeUnlock] = useState(false);
+  const [lockCameraActive, setLockCameraActive] = useState(false);
 
-  const handleLockScreenTap = () => {
+  const lockVideoRef = useRef<HTMLVideoElement | null>(null);
+  const lockStreamRef = useRef<MediaStream | null>(null);
+
+  const handleLockScreenTap = async () => {
     if (state.faceId.isEnrolled && state.faceId.useForIphoneUnlock) {
       setIsFaceIdScanning(true);
       playBiometricTickSound();
+
+      // Quick webcam glance
+      try {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'user', width: { ideal: 240 }, height: { ideal: 240 } },
+            audio: false
+          });
+          lockStreamRef.current = stream;
+          if (lockVideoRef.current) {
+            lockVideoRef.current.srcObject = stream;
+            lockVideoRef.current.play().catch(() => {});
+          }
+          setLockCameraActive(true);
+        }
+      } catch (e) {
+        // Fallback without camera stream
+        setLockCameraActive(false);
+      }
+
       setTimeout(() => {
         setIsFaceIdScanning(false);
         setIsFaceIdUnlocked(true);
@@ -67,11 +91,17 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
         } else {
           playUnlockSound();
         }
+
         setTimeout(() => {
+          if (lockStreamRef.current) {
+            lockStreamRef.current.getTracks().forEach((t) => t.stop());
+            lockStreamRef.current = null;
+          }
+          setLockCameraActive(false);
           setIsFaceIdUnlocked(false);
           onUpdateState((s) => ({ ...s, isLocked: false }));
-        }, 400);
-      }, 500);
+        }, 450);
+      }, 700);
     } else if (state.faceId.isPasscodeEnabled) {
       setShowPasscodeUnlock(true);
     } else {
@@ -301,14 +331,25 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
 
                 {/* Top Lock Icon & Face ID Sensor Visual */}
                 <div className="flex flex-col items-center space-y-1 relative z-10">
-                  <div className="h-8 flex items-center justify-center">
+                  <div className="h-10 flex items-center justify-center">
                     {isFaceIdScanning ? (
-                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 border border-emerald-400 text-emerald-400 backdrop-blur-md animate-pulse">
-                        <Scan className="w-4 h-4 animate-spin text-emerald-400" />
-                        <span className="text-[10px] font-bold tracking-wider uppercase">Scanning Face ID</span>
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/80 border border-emerald-400 text-emerald-400 backdrop-blur-md shadow-[0_0_15px_rgba(34,197,94,0.4)] animate-pulse">
+                        <div className="w-5 h-5 rounded-full overflow-hidden relative border border-emerald-400 bg-neutral-900 flex items-center justify-center">
+                          <video
+                            ref={lockVideoRef}
+                            autoPlay
+                            playsInline
+                            muted
+                            className={`w-full h-full object-cover transform -scale-x-100 ${
+                              lockCameraActive ? 'opacity-100' : 'opacity-0'
+                            }`}
+                          />
+                          {!lockCameraActive && <Scan className="w-3 h-3 text-emerald-400 animate-spin" />}
+                        </div>
+                        <span className="text-[10px] font-bold tracking-wider uppercase">Scanning Face...</span>
                       </div>
                     ) : isFaceIdUnlocked ? (
-                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/80 text-white backdrop-blur-md">
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500 text-white backdrop-blur-md shadow-lg animate-scale-up">
                         <Unlock className="w-4 h-4" />
                         <span className="text-[10px] font-bold">Face ID Verified</span>
                       </div>
