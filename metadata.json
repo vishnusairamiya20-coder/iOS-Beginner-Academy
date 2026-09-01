@@ -1,0 +1,6 @@
+{
+  "name": "iOS Beginner Guide & Simulator",
+  "description": "An interactive learning guide and hands-on iPhone simulator designed for new iOS users to master gestures, settings, essential apps, iCloud, and privacy.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
