@@ -8,7 +8,11 @@ import {
   Radio,
   ChevronDown,
   Sparkles,
-  RotateCcw
+  RotateCcw,
+  Scan,
+  Lock,
+  Unlock,
+  Key
 } from 'lucide-react';
 import { SimulatorState, IosAppId } from '../../types';
 import { DynamicIsland } from './DynamicIsland';
@@ -31,7 +35,8 @@ import { FounderApp } from './apps/FounderApp';
 import { MusicApp } from './apps/MusicApp';
 import { YouTubeApp } from './apps/YouTubeApp';
 import { WallpaperBackground } from './WallpaperBackground';
-import { playLockSound, playUnlockSound, playVolumeStepSound, playCameraShutterSound } from '../../utils/audioUtils';
+import { PasscodeKeypad } from './PasscodeKeypad';
+import { playLockSound, playUnlockSound, playVolumeStepSound, playCameraShutterSound, playFaceIdSuccessSound, playBiometricTickSound } from '../../utils/audioUtils';
 
 interface IPhoneFrameProps {
   state: SimulatorState;
@@ -46,6 +51,34 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
 }) => {
   const [swipeStartY, setSwipeStartY] = useState<number | null>(null);
   const [screenshotFlash, setScreenshotFlash] = useState(false);
+  const [isFaceIdScanning, setIsFaceIdScanning] = useState(false);
+  const [isFaceIdUnlocked, setIsFaceIdUnlocked] = useState(false);
+  const [showPasscodeUnlock, setShowPasscodeUnlock] = useState(false);
+
+  const handleLockScreenTap = () => {
+    if (state.faceId.isEnrolled && state.faceId.useForIphoneUnlock) {
+      setIsFaceIdScanning(true);
+      playBiometricTickSound();
+      setTimeout(() => {
+        setIsFaceIdScanning(false);
+        setIsFaceIdUnlocked(true);
+        if (state.faceId.hapticOnSuccess) {
+          playFaceIdSuccessSound();
+        } else {
+          playUnlockSound();
+        }
+        setTimeout(() => {
+          setIsFaceIdUnlocked(false);
+          onUpdateState((s) => ({ ...s, isLocked: false }));
+        }, 400);
+      }, 500);
+    } else if (state.faceId.isPasscodeEnabled) {
+      setShowPasscodeUnlock(true);
+    } else {
+      playUnlockSound();
+      onUpdateState((s) => ({ ...s, isLocked: false }));
+    }
+  };
 
   const openApp = (appId: IosAppId) => {
     onUpdateState((s) => ({
@@ -244,25 +277,56 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
           {/* Active Screen Content */}
           <div className="flex-1 relative overflow-hidden">
             {state.isLocked ? (
-              /* REALISTIC IOS LOCK SCREEN */
+              /* REALISTIC IOS LOCK SCREEN WITH FACE ID & PASSCODE */
               <div
-                onClick={() => {
-                  playUnlockSound();
-                  onUpdateState((s) => ({ ...s, isLocked: false }));
-                }}
+                onClick={handleLockScreenTap}
                 className="h-full flex flex-col justify-between pt-14 pb-8 px-6 select-none text-white cursor-pointer relative overflow-hidden"
               >
                 {/* Lockscreen Wallpaper */}
                 <WallpaperBackground wallpaper={state.wallpaper} isDarkMode={state.isDarkMode} isLockScreen />
-                {/* Lock icon & Time */}
-                <div className="flex flex-col items-center space-y-1">
-                  <span className="text-sm opacity-80">🔒</span>
+
+                {/* Passcode Keypad Overlay if requested */}
+                {showPasscodeUnlock && (
+                  <PasscodeKeypad
+                    correctPasscode={state.faceId.passcode || '123456'}
+                    title="Enter Passcode"
+                    subtitle="Unlock your iPhone"
+                    onSuccess={() => {
+                      setShowPasscodeUnlock(false);
+                      onUpdateState((s) => ({ ...s, isLocked: false }));
+                    }}
+                    onCancel={() => setShowPasscodeUnlock(false)}
+                  />
+                )}
+
+                {/* Top Lock Icon & Face ID Sensor Visual */}
+                <div className="flex flex-col items-center space-y-1 relative z-10">
+                  <div className="h-8 flex items-center justify-center">
+                    {isFaceIdScanning ? (
+                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 border border-emerald-400 text-emerald-400 backdrop-blur-md animate-pulse">
+                        <Scan className="w-4 h-4 animate-spin text-emerald-400" />
+                        <span className="text-[10px] font-bold tracking-wider uppercase">Scanning Face ID</span>
+                      </div>
+                    ) : isFaceIdUnlocked ? (
+                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/80 text-white backdrop-blur-md">
+                        <Unlock className="w-4 h-4" />
+                        <span className="text-[10px] font-bold">Face ID Verified</span>
+                      </div>
+                    ) : state.faceId.isEnrolled && state.faceId.useForIphoneUnlock ? (
+                      <div className="flex items-center gap-1 opacity-85 hover:opacity-100 transition-opacity">
+                        <Lock className="w-4 h-4" />
+                        <span className="text-[9px] text-white/70 font-medium">Face ID Ready</span>
+                      </div>
+                    ) : (
+                      <Lock className="w-4 h-4 opacity-80" />
+                    )}
+                  </div>
                   <p className="text-xs font-semibold uppercase tracking-wider opacity-90">Wednesday, August 27</p>
                   <h1 className="text-6xl font-light tracking-tighter">9:41</h1>
                 </div>
 
                 {/* Notification Banner on Lock Screen */}
-                <div className="space-y-2">
+                <div className="space-y-2 relative z-10">
                   <div className="p-3 rounded-2xl bg-black/40 backdrop-blur-xl border border-white/20 text-xs shadow-xl space-y-1 animate-fade-in">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-[11px] text-rose-400 flex items-center gap-1">
@@ -274,8 +338,8 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
                   </div>
                 </div>
 
-                {/* Bottom Lock Screen Shortcuts (Flashlight & Camera) */}
-                <div className="flex items-center justify-between pt-4">
+                {/* Bottom Lock Screen Shortcuts (Flashlight, Swipe Up Prompt, Camera, Passcode) */}
+                <div className="flex items-center justify-between pt-4 relative z-10">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -287,7 +351,26 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
                   >
                     🔦
                   </button>
-                  <span className="text-[11px] font-medium opacity-80 animate-pulse">Swipe up to open</span>
+
+                  <div className="flex flex-col items-center">
+                    <span className="text-[11px] font-medium opacity-80 animate-pulse">
+                      {state.faceId.isEnrolled && state.faceId.useForIphoneUnlock
+                        ? 'Tap to unlock with Face ID'
+                        : 'Swipe up to open'}
+                    </span>
+                    {state.faceId.isPasscodeEnabled && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowPasscodeUnlock(true);
+                        }}
+                        className="text-[9px] text-white/60 hover:text-white underline mt-0.5"
+                      >
+                        Enter Passcode
+                      </button>
+                    )}
+                  </div>
+
                   <button
                     onClick={(e) => {
                       e.stopPropagation();

@@ -38,6 +38,22 @@ export interface UserPhotoItem {
   isCameraRoll?: boolean;
 }
 
+export interface FaceIdState {
+  isEnrolled: boolean;
+  enrollmentDate?: string;
+  useForIphoneUnlock: boolean;
+  useForAppStore: boolean;
+  useForWallet: boolean;
+  useForAutofill: boolean;
+  requireAttention: boolean;
+  attentionAwareFeatures: boolean;
+  passcode: string;
+  isPasscodeEnabled: boolean;
+  alternativeAppearance: boolean;
+  maskUnlockEnabled: boolean;
+  hapticOnSuccess: boolean;
+}
+
 export interface SimulatorState {
   currentApp: IosAppId;
   previousApp?: IosAppId;
@@ -52,6 +68,9 @@ export interface SimulatorState {
   // Power & Lock screen
   isLocked: boolean;
   isScreenOff: boolean;
+
+  // Face ID & Biometrics State
+  faceId: FaceIdState;
 
   // Physical Side Buttons HUD
   volumeHudVisible: boolean;

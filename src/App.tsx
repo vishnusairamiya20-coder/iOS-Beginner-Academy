@@ -40,6 +40,21 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
   
   isLocked: false,
   isScreenOff: false,
+  faceId: {
+    isEnrolled: true,
+    enrollmentDate: 'August 2026',
+    useForIphoneUnlock: true,
+    useForAppStore: true,
+    useForWallet: true,
+    useForAutofill: true,
+    requireAttention: true,
+    attentionAwareFeatures: true,
+    passcode: '123456',
+    isPasscodeEnabled: true,
+    alternativeAppearance: false,
+    maskUnlockEnabled: true,
+    hapticOnSuccess: true
+  },
   volumeHudVisible: false,
   actionButtonHUD: null,
   actionButtonMode: 'flashlight',

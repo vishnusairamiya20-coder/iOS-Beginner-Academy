@@ -29,11 +29,16 @@ import {
   Mic,
   Zap,
   RefreshCw,
-  Edit2
+  Edit2,
+  Scan,
+  ShieldCheck,
+  Fingerprint
 } from 'lucide-react';
 import { SimulatorState } from '../../../types';
-import { playDtmfTone, playVolumeStepSound } from '../../../utils/audioUtils';
+import { playDtmfTone, playVolumeStepSound, playFaceIdSuccessSound, playLockSound } from '../../../utils/audioUtils';
 import { WallpaperBackground } from '../WallpaperBackground';
+import { FaceIdEnrollmentModal, FaceIdPrompt } from '../FaceIdEnrollmentModal';
+import { PasscodeKeypad } from '../PasscodeKeypad';
 
 interface SettingsAppProps {
   state: SimulatorState;
@@ -48,6 +53,13 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
   const [fakeEmail, setFakeEmail] = useState(state.appleId.email);
   const [fakePhone, setFakePhone] = useState(state.appleId.phone);
 
+  // Face ID modal states
+  const [showFaceIdEnrollment, setShowFaceIdEnrollment] = useState(false);
+  const [showFaceIdPromptTest, setShowFaceIdPromptTest] = useState(false);
+  const [showPasscodeModal, setShowPasscodeModal] = useState(false);
+  const [isVerifyingPasscodeForFaceId, setIsVerifyingPasscodeForFaceId] = useState(false);
+  const [isChangingPasscode, setIsChangingPasscode] = useState(false);
+
   // Subpage toggles
   const toggleWifi = () => onUpdateState((s) => ({ ...s, isWifiOn: !s.isWifiOn }));
   const toggleBluetooth = () => onUpdateState((s) => ({ ...s, isBluetoothOn: !s.isBluetoothOn }));
@@ -56,6 +68,42 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
   const toggleDarkMode = () => onUpdateState((s) => ({ ...s, isDarkMode: !s.isDarkMode }));
   const toggleLowPower = () => onUpdateState((s) => ({ ...s, isLowPowerMode: !s.isLowPowerMode }));
   const toggleDoNotDisturb = () => onUpdateState((s) => ({ ...s, isDoNotDisturb: !s.isDoNotDisturb }));
+
+  // Face ID Toggles
+  const updateFaceId = (key: keyof typeof state.faceId, value: any) => {
+    playVolumeStepSound();
+    onUpdateState((s) => ({
+      ...s,
+      faceId: {
+        ...s.faceId,
+        [key]: value
+      }
+    }));
+  };
+
+  const handleResetFaceId = () => {
+    playLockSound();
+    onUpdateState((s) => ({
+      ...s,
+      faceId: {
+        ...s.faceId,
+        isEnrolled: false,
+        useForIphoneUnlock: false,
+        useForAppStore: false,
+        useForWallet: false,
+        useForAutofill: false,
+        alternativeAppearance: false
+      }
+    }));
+  };
+
+  const handleOpenFaceIdSettings = () => {
+    if (state.faceId.isPasscodeEnabled) {
+      setIsVerifyingPasscodeForFaceId(true);
+    } else {
+      setActiveSubpage('face_id');
+    }
+  };
 
   const handleSaveAppleId = () => {
     onUpdateState((s) => ({
@@ -701,6 +749,347 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
     );
   }
 
+  // 9. FACE ID & PASSCODE SUBPAGE
+  if (activeSubpage === 'face_id') {
+    return (
+      <div className={`h-full flex flex-col ${state.isDarkMode ? 'bg-black text-white' : 'bg-[#F2F2F7] text-black'} select-none text-xs font-sans`}>
+        {/* Modals for Face ID Setup & Test */}
+        {showFaceIdEnrollment && (
+          <FaceIdEnrollmentModal
+            state={state}
+            onClose={() => setShowFaceIdEnrollment(false)}
+            onComplete={() => {
+              updateFaceId('isEnrolled', true);
+              updateFaceId('useForIphoneUnlock', true);
+              updateFaceId('useForAppStore', true);
+              updateFaceId('useForWallet', true);
+              updateFaceId('useForAutofill', true);
+              updateFaceId('enrollmentDate', 'Today');
+              setShowFaceIdEnrollment(false);
+            }}
+          />
+        )}
+
+        {showFaceIdPromptTest && (
+          <FaceIdPrompt
+            title="Face ID Authentication"
+            subtitle="Testing TrueDepth Camera..."
+            onSuccess={() => {
+              setShowFaceIdPromptTest(false);
+            }}
+            onCancel={() => setShowFaceIdPromptTest(false)}
+          />
+        )}
+
+        {isChangingPasscode && (
+          <PasscodeKeypad
+            isSettingNew
+            title="Change Passcode"
+            onSuccess={() => {
+              setIsChangingPasscode(false);
+              playFaceIdSuccessSound();
+            }}
+            onCancel={() => setIsChangingPasscode(false)}
+            onSaveNewPasscode={(newPin) => {
+              updateFaceId('passcode', newPin);
+              updateFaceId('isPasscodeEnabled', true);
+            }}
+          />
+        )}
+
+        {/* Subpage Header */}
+        <div className={`pt-12 pb-2 px-3 flex items-center gap-2 border-b ${state.isDarkMode ? 'border-neutral-800 bg-neutral-900/80' : 'border-neutral-200 bg-white/80'} backdrop-blur`}>
+          <button onClick={() => setActiveSubpage(null)} className="flex items-center text-blue-500 font-medium cursor-pointer">
+            <ArrowLeft className="w-4 h-4 mr-0.5" />
+            <span>Settings</span>
+          </button>
+          <span className="font-semibold text-sm mx-auto pr-6">Face ID & Passcode</span>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {/* SECTION 1: USE FACE ID FOR */}
+          <div className="space-y-1">
+            <span className="text-[10px] uppercase font-bold text-neutral-400 px-1 tracking-wider">
+              Use Face ID For:
+            </span>
+            <div className={`rounded-2xl divide-y divide-neutral-200 dark:divide-neutral-800 shadow-xs ${state.isDarkMode ? 'bg-neutral-900' : 'bg-white'}`}>
+              <div className="p-3 flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-xs">iPhone Unlock</p>
+                  <p className="text-[10px] text-neutral-400">Unlock your device instantly when looking at the screen.</p>
+                </div>
+                <button
+                  disabled={!state.faceId.isEnrolled}
+                  onClick={() => updateFaceId('useForIphoneUnlock', !state.faceId.useForIphoneUnlock)}
+                  className={`w-11 h-6 rounded-full transition-colors relative flex items-center p-0.5 ${
+                    state.faceId.useForIphoneUnlock && state.faceId.isEnrolled ? 'bg-green-500' : state.isDarkMode ? 'bg-neutral-700' : 'bg-neutral-300'
+                  } ${!state.faceId.isEnrolled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  <div className={`w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${state.faceId.useForIphoneUnlock && state.faceId.isEnrolled ? 'translate-x-5' : 'translate-x-0'}`} />
+                </button>
+              </div>
+
+              <div className="p-3 flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-xs">iTunes & App Store</p>
+                  <p className="text-[10px] text-neutral-400">Authenticate purchases and downloads with double-click.</p>
+                </div>
+                <button
+                  disabled={!state.faceId.isEnrolled}
+                  onClick={() => updateFaceId('useForAppStore', !state.faceId.useForAppStore)}
+                  className={`w-11 h-6 rounded-full transition-colors relative flex items-center p-0.5 ${
+                    state.faceId.useForAppStore && state.faceId.isEnrolled ? 'bg-green-500' : state.isDarkMode ? 'bg-neutral-700' : 'bg-neutral-300'
+                  } ${!state.faceId.isEnrolled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  <div className={`w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${state.faceId.useForAppStore && state.faceId.isEnrolled ? 'translate-x-5' : 'translate-x-0'}`} />
+                </button>
+              </div>
+
+              <div className="p-3 flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-xs">Wallet & Apple Pay</p>
+                  <p className="text-[10px] text-neutral-400">Authorize contactless payments and cards.</p>
+                </div>
+                <button
+                  disabled={!state.faceId.isEnrolled}
+                  onClick={() => updateFaceId('useForWallet', !state.faceId.useForWallet)}
+                  className={`w-11 h-6 rounded-full transition-colors relative flex items-center p-0.5 ${
+                    state.faceId.useForWallet && state.faceId.isEnrolled ? 'bg-green-500' : state.isDarkMode ? 'bg-neutral-700' : 'bg-neutral-300'
+                  } ${!state.faceId.isEnrolled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  <div className={`w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${state.faceId.useForWallet && state.faceId.isEnrolled ? 'translate-x-5' : 'translate-x-0'}`} />
+                </button>
+              </div>
+
+              <div className="p-3 flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-xs">Password Autofill</p>
+                  <p className="text-[10px] text-neutral-400">Fill saved passwords and credentials in Safari.</p>
+                </div>
+                <button
+                  disabled={!state.faceId.isEnrolled}
+                  onClick={() => updateFaceId('useForAutofill', !state.faceId.useForAutofill)}
+                  className={`w-11 h-6 rounded-full transition-colors relative flex items-center p-0.5 ${
+                    state.faceId.useForAutofill && state.faceId.isEnrolled ? 'bg-green-500' : state.isDarkMode ? 'bg-neutral-700' : 'bg-neutral-300'
+                  } ${!state.faceId.isEnrolled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  <div className={`w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${state.faceId.useForAutofill && state.faceId.isEnrolled ? 'translate-x-5' : 'translate-x-0'}`} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* SECTION 2: BIOMETRIC STATUS & ACTIONS */}
+          <div className="space-y-1">
+            <span className="text-[10px] uppercase font-bold text-neutral-400 px-1 tracking-wider">
+              Biometric Enrollment
+            </span>
+            <div className={`rounded-2xl divide-y divide-neutral-200 dark:divide-neutral-800 shadow-xs ${state.isDarkMode ? 'bg-neutral-900' : 'bg-white'}`}>
+              {state.faceId.isEnrolled ? (
+                <>
+                  <div className="p-3.5 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center">
+                        <Scan className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-xs">Face ID is Set Up</span>
+                          <span className="px-1.5 py-0.2 rounded-md bg-emerald-500/20 text-emerald-500 font-bold text-[9px]">
+                            Active
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-neutral-400 mt-0.5">
+                          Primary User Profile • {state.faceId.enrollmentDate || 'Enrolled'}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setShowFaceIdPromptTest(true)}
+                      className="px-3 py-1.5 rounded-xl bg-blue-500 text-white font-bold text-[10px] hover:bg-blue-600 active:scale-95 transition-all shadow-xs cursor-pointer"
+                    >
+                      Test Scan
+                    </button>
+                  </div>
+
+                  <div
+                    onClick={() => setShowFaceIdEnrollment(true)}
+                    className="p-3 flex items-center justify-between cursor-pointer hover:opacity-80"
+                  >
+                    <span className="font-medium text-xs text-blue-500">
+                      Set Up an Alternative Appearance
+                    </span>
+                    <ChevronRight className="w-3.5 h-3.5 text-neutral-400" />
+                  </div>
+
+                  <div className="p-3 flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-xs">Face ID with a Mask</p>
+                      <p className="text-[10px] text-neutral-400">Authenticates by analyzing the unique features around the eye area.</p>
+                    </div>
+                    <button
+                      onClick={() => updateFaceId('maskUnlockEnabled', !state.faceId.maskUnlockEnabled)}
+                      className={`w-11 h-6 rounded-full transition-colors relative flex items-center p-0.5 ${
+                        state.faceId.maskUnlockEnabled ? 'bg-green-500' : state.isDarkMode ? 'bg-neutral-700' : 'bg-neutral-300'
+                      }`}
+                    >
+                      <div className={`w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${state.faceId.maskUnlockEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
+                    </button>
+                  </div>
+
+                  <div
+                    onClick={handleResetFaceId}
+                    className="p-3 flex items-center justify-between cursor-pointer hover:opacity-80"
+                  >
+                    <span className="font-bold text-xs text-rose-500">Reset Face ID</span>
+                    <span className="text-[10px] text-rose-400">Erase Profile</span>
+                  </div>
+                </>
+              ) : (
+                <div className="p-4 flex flex-col items-center text-center space-y-3">
+                  <div className="w-14 h-14 rounded-3xl bg-blue-500/10 border border-blue-500/20 text-blue-500 flex items-center justify-center shadow-inner">
+                    <Scan className="w-8 h-8" />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-bold text-sm">Face ID is Not Set Up</h4>
+                    <p className="text-[11px] text-neutral-400 max-w-[240px]">
+                      Set up Face ID to quickly unlock your iPhone, make purchases, and secure sensitive personal data.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowFaceIdEnrollment(true)}
+                    className="w-full py-3 rounded-xl bg-blue-500 hover:bg-blue-600 active:scale-98 text-white font-bold text-xs shadow-md transition-all cursor-pointer"
+                  >
+                    Set Up Face ID
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* SECTION 3: ATTENTION AWARE FEATURES */}
+          <div className="space-y-1">
+            <span className="text-[10px] uppercase font-bold text-neutral-400 px-1 tracking-wider">
+              Attention & Security
+            </span>
+            <div className={`rounded-2xl divide-y divide-neutral-200 dark:divide-neutral-800 shadow-xs ${state.isDarkMode ? 'bg-neutral-900' : 'bg-white'}`}>
+              <div className="p-3 flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-xs">Require Attention for Face ID</p>
+                  <p className="text-[10px] text-neutral-400 leading-tight">
+                    Requires looking directly at the screen with open eyes before unlocking.
+                  </p>
+                </div>
+                <button
+                  onClick={() => updateFaceId('requireAttention', !state.faceId.requireAttention)}
+                  className={`w-11 h-6 rounded-full transition-colors relative flex items-center p-0.5 ${
+                    state.faceId.requireAttention ? 'bg-green-500' : state.isDarkMode ? 'bg-neutral-700' : 'bg-neutral-300'
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${state.faceId.requireAttention ? 'translate-x-5' : 'translate-x-0'}`} />
+                </button>
+              </div>
+
+              <div className="p-3 flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-xs">Attention Aware Features</p>
+                  <p className="text-[10px] text-neutral-400 leading-tight">
+                    Dim screen only when not looking, expand lock notifications, and lower alarm volume.
+                  </p>
+                </div>
+                <button
+                  onClick={() => updateFaceId('attentionAwareFeatures', !state.faceId.attentionAwareFeatures)}
+                  className={`w-11 h-6 rounded-full transition-colors relative flex items-center p-0.5 ${
+                    state.faceId.attentionAwareFeatures ? 'bg-green-500' : state.isDarkMode ? 'bg-neutral-700' : 'bg-neutral-300'
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${state.faceId.attentionAwareFeatures ? 'translate-x-5' : 'translate-x-0'}`} />
+                </button>
+              </div>
+
+              <div className="p-3 flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-xs">Haptic on Success</p>
+                  <p className="text-[10px] text-neutral-400 leading-tight">
+                    Play gentle haptic feedback when Face ID authenticates successfully.
+                  </p>
+                </div>
+                <button
+                  onClick={() => updateFaceId('hapticOnSuccess', !state.faceId.hapticOnSuccess)}
+                  className={`w-11 h-6 rounded-full transition-colors relative flex items-center p-0.5 ${
+                    state.faceId.hapticOnSuccess ? 'bg-green-500' : state.isDarkMode ? 'bg-neutral-700' : 'bg-neutral-300'
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${state.faceId.hapticOnSuccess ? 'translate-x-5' : 'translate-x-0'}`} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* SECTION 4: PASSCODE CONTROLS */}
+          <div className="space-y-1">
+            <span className="text-[10px] uppercase font-bold text-neutral-400 px-1 tracking-wider">
+              Passcode Settings
+            </span>
+            <div className={`rounded-2xl divide-y divide-neutral-200 dark:divide-neutral-800 shadow-xs ${state.isDarkMode ? 'bg-neutral-900' : 'bg-white'}`}>
+              <div
+                onClick={() => updateFaceId('isPasscodeEnabled', !state.faceId.isPasscodeEnabled)}
+                className="p-3 flex items-center justify-between cursor-pointer hover:opacity-80"
+              >
+                <span className="font-semibold text-xs text-blue-500">
+                  {state.faceId.isPasscodeEnabled ? 'Turn Passcode Off' : 'Turn Passcode On'}
+                </span>
+                <span className="text-[10px] text-neutral-400">
+                  {state.faceId.isPasscodeEnabled ? '6-Digit PIN' : 'Disabled'}
+                </span>
+              </div>
+
+              {state.faceId.isPasscodeEnabled && (
+                <div
+                  onClick={() => setIsChangingPasscode(true)}
+                  className="p-3 flex items-center justify-between cursor-pointer hover:opacity-80"
+                >
+                  <span className="font-semibold text-xs text-blue-500">Change Passcode</span>
+                  <ChevronRight className="w-3.5 h-3.5 text-neutral-400" />
+                </div>
+              )}
+
+              <div className="p-3 flex items-center justify-between">
+                <span className="font-medium text-neutral-500 text-xs">Require Passcode</span>
+                <span className="font-bold text-xs">Immediately</span>
+              </div>
+            </div>
+          </div>
+
+          {/* SECTION 5: ALLOW ACCESS WHEN LOCKED */}
+          <div className="space-y-1">
+            <span className="text-[10px] uppercase font-bold text-neutral-400 px-1 tracking-wider">
+              Allow Access When Locked:
+            </span>
+            <div className={`rounded-2xl divide-y divide-neutral-200 dark:divide-neutral-800 shadow-xs ${state.isDarkMode ? 'bg-neutral-900' : 'bg-white'}`}>
+              {[
+                'Lock Screen Widgets',
+                'Notification Center',
+                'Control Center',
+                'Siri & Voice Assistant',
+                'Reply with Message',
+                'Wallet & Passes',
+                'Return Missed Calls'
+              ].map((item) => (
+                <div key={item} className="p-3 flex items-center justify-between">
+                  <span className="font-semibold text-xs">{item}</span>
+                  <div className="w-11 h-6 rounded-full bg-green-500 relative flex items-center p-0.5">
+                    <div className="w-5 h-5 rounded-full bg-white shadow-md transform translate-x-5" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // MAIN SETTINGS ROOT VIEW
   return (
     <div className={`h-full flex flex-col ${state.isDarkMode ? 'bg-black text-white' : 'bg-[#F2F2F7] text-black'} select-none font-sans relative text-xs`}>
@@ -761,6 +1150,20 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
       <div className="pt-14 pb-2 px-4 border-b border-neutral-200 dark:border-neutral-800">
         <h1 className="text-2xl font-bold">Settings</h1>
       </div>
+
+      {/* Verify Passcode Modal before opening Face ID settings */}
+      {isVerifyingPasscodeForFaceId && (
+        <PasscodeKeypad
+          correctPasscode={state.faceId.passcode || '123456'}
+          title="Enter Passcode"
+          subtitle="Enter your passcode to view Face ID settings"
+          onSuccess={() => {
+            setIsVerifyingPasscodeForFaceId(false);
+            setActiveSubpage('face_id');
+          }}
+          onCancel={() => setIsVerifyingPasscodeForFaceId(false)}
+        />
+      )}
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {/* Apple ID Profile Card */}
@@ -924,6 +1327,29 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
             </div>
             <div className="flex items-center gap-1 text-neutral-400 text-[11px]">
               <span>{state.batteryLevel}%</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </div>
+          </div>
+        </div>
+
+        {/* Security & Biometrics Stack */}
+        <div className={`rounded-2xl divide-y divide-neutral-200 dark:divide-neutral-800 shadow-xs ${state.isDarkMode ? 'bg-neutral-900' : 'bg-white'}`}>
+          <div
+            onClick={handleOpenFaceIdSettings}
+            className="p-3 flex items-center justify-between cursor-pointer hover:opacity-75"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center shadow-xs">
+                <Scan className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="font-semibold text-xs">Face ID & Passcode</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 text-neutral-400 text-[11px]">
+              <span className={state.faceId.isEnrolled ? 'text-emerald-500 font-bold' : 'text-neutral-400'}>
+                {state.faceId.isEnrolled ? 'On' : 'Set Up'}
+              </span>
               <ChevronRight className="w-3.5 h-3.5" />
             </div>
           </div>
