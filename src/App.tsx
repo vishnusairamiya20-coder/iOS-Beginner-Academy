@@ -57,8 +57,9 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
   },
   volumeHudVisible: false,
   actionButtonHUD: null,
-  actionButtonMode: 'flashlight',
+  actionButtonMode: 'siri',
   isSilentMode: false,
+  isSiriOpen: false,
 
   isWifiOn: true,
   isBluetoothOn: true,
@@ -450,11 +451,12 @@ export default function App() {
                 <span>Beginner Gesture Cheatsheet</span>
               </div>
               <ul className="space-y-1 text-[11px] text-neutral-600 dark:text-neutral-400 leading-tight">
+                <li>• <strong>Volume & Mute</strong>: Click chassis buttons, toolbar, or press <kbd className="px-1 py-0.5 rounded bg-neutral-200 dark:bg-neutral-800 text-[10px] font-mono">+</kbd> / <kbd className="px-1 py-0.5 rounded bg-neutral-200 dark:bg-neutral-800 text-[10px] font-mono">-</kbd> / <kbd className="px-1 py-0.5 rounded bg-neutral-200 dark:bg-neutral-800 text-[10px] font-mono">M</kbd>.</li>
                 <li>• <strong>Go Home</strong>: Flick up from bottom white bar.</li>
                 <li>• <strong>Control Center</strong>: Pull down from top-right battery corner.</li>
                 <li>• <strong>Search / Spotlight</strong>: Swipe down on home screen wallpaper.</li>
                 <li>• <strong>App Switcher</strong>: Swipe up from bottom and pause.</li>
-                <li>• <strong>Quick Settings</strong>: Long press any app icon.</li>
+                <li>• <strong>Camera Shutter</strong>: Volume buttons snap photos inside Camera app.</li>
               </ul>
             </div>
           </div>

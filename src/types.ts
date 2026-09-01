@@ -76,8 +76,9 @@ export interface SimulatorState {
   // Physical Side Buttons HUD
   volumeHudVisible: boolean;
   actionButtonHUD: { visible: boolean; label: string; icon: string } | null;
-  actionButtonMode: 'flashlight' | 'silent' | 'camera' | 'focus' | 'voicememo';
+  actionButtonMode: 'siri' | 'flashlight' | 'silent' | 'camera' | 'focus' | 'voicememo';
   isSilentMode: boolean;
+  isSiriOpen: boolean;
   
   // Settings & Toggles
   isWifiOn: boolean;
@@ -167,7 +168,8 @@ export type GestureType =
   | 'toggle_flashlight'
   | 'toggle_dark_mode'
   | 'start_timer'
-  | 'search_spotlight';
+  | 'search_spotlight'
+  | 'trigger_siri';
 
 export interface Mission {
   id: string;

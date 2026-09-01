@@ -196,23 +196,28 @@ export function playMessageReceivedSound() {
 }
 
 // Volume step beep / Haptic feedback sound
-export function playVolumeStepSound() {
+export function playVolumeStepSound(volumeLevel = 50) {
   const ctx = getAudioContext();
   if (!ctx) return;
   const now = ctx.currentTime;
 
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(880, now);
 
-  gain.gain.setValueAtTime(0.05, now);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+  // Pitch scales slightly with volume (600Hz at 0% up to 1200Hz at 100%)
+  const freq = 600 + (volumeLevel / 100) * 600;
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, now);
+
+  // Volume scale
+  const gainAmount = Math.max(0.01, (volumeLevel / 100) * 0.08);
+  gain.gain.setValueAtTime(gainAmount, now);
+  gain.gain.exponentialRampToValueAtTime(0.0005, now + 0.035);
 
   osc.connect(gain);
   gain.connect(ctx.destination);
   osc.start(now);
-  osc.stop(now + 0.03);
+  osc.stop(now + 0.035);
 }
 
 // Phone Ringing Tone
@@ -484,4 +489,55 @@ export function playBiometricTickSound() {
   osc.start(now);
   osc.stop(now + 0.02);
 }
+
+// Siri Activation Dual-Tone Chime
+export function playSiriChimeSound() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+
+  // First Tone (490Hz)
+  const osc1 = ctx.createOscillator();
+  const gain1 = ctx.createGain();
+  osc1.type = 'sine';
+  osc1.frequency.setValueAtTime(490, now);
+  gain1.gain.setValueAtTime(0.12, now);
+  gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+  osc1.connect(gain1);
+  gain1.connect(ctx.destination);
+  osc1.start(now);
+  osc1.stop(now + 0.12);
+
+  // Second Tone (640Hz)
+  const osc2 = ctx.createOscillator();
+  const gain2 = ctx.createGain();
+  osc2.type = 'sine';
+  osc2.frequency.setValueAtTime(640, now + 0.09);
+  gain2.gain.setValueAtTime(0.14, now + 0.09);
+  gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+  osc2.connect(gain2);
+  gain2.connect(ctx.destination);
+  osc2.start(now + 0.09);
+  osc2.stop(now + 0.28);
+}
+
+// Siri Dismiss Chime
+export function playSiriDismissSound() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(540, now);
+  osc.frequency.exponentialRampToValueAtTime(380, now + 0.15);
+  gain.gain.setValueAtTime(0.08, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.18);
+}
+
 

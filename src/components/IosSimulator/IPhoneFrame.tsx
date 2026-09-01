@@ -1,9 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import {
   Wifi,
   Battery,
   Zap,
   Volume2,
+  Volume1,
+  Volume,
   VolumeX,
   Radio,
   ChevronDown,
@@ -12,7 +14,12 @@ import {
   Scan,
   Lock,
   Unlock,
-  Key
+  Key,
+  Plus,
+  Minus,
+  Bell,
+  BellOff,
+  Power
 } from 'lucide-react';
 import { SimulatorState, IosAppId } from '../../types';
 import { DynamicIsland } from './DynamicIsland';
@@ -21,6 +28,7 @@ import { ControlCenter } from './ControlCenter';
 import { NotificationCenter } from './NotificationCenter';
 import { SpotlightSearch } from './SpotlightSearch';
 import { AppSwitcher } from './AppSwitcher';
+import { VolumeHUD } from './VolumeHUD';
 import { SettingsApp } from './apps/SettingsApp';
 import { MessagesApp } from './apps/MessagesApp';
 import { CameraApp } from './apps/CameraApp';
@@ -58,6 +66,86 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
   const [isFaceIdUnlocked, setIsFaceIdUnlocked] = useState(false);
   const [showPasscodeUnlock, setShowPasscodeUnlock] = useState(false);
   const [lockCameraActive, setLockCameraActive] = useState(false);
+  const [isVolumeHudVisible, setIsVolumeHudVisible] = useState(false);
+  const volumeHudTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const previousVolumeRef = useRef<number>(state.volume || 70);
+
+  const showVolumeHUD = useCallback((newVolume: number) => {
+    onUpdateState((s) => ({ ...s, volume: newVolume }));
+    setIsVolumeHudVisible(true);
+    if (volumeHudTimerRef.current) {
+      clearTimeout(volumeHudTimerRef.current);
+    }
+    volumeHudTimerRef.current = setTimeout(() => {
+      setIsVolumeHudVisible(false);
+    }, 2400);
+  }, [onUpdateState]);
+
+  const handleVolumeUp = useCallback(() => {
+    if (state.currentApp === 'camera') {
+      playCameraShutterSound();
+      setScreenshotFlash(true);
+      setTimeout(() => setScreenshotFlash(false), 300);
+    } else {
+      const nextVol = Math.min(100, state.volume + 6);
+      playVolumeStepSound(nextVol);
+      showVolumeHUD(nextVol);
+    }
+  }, [state.currentApp, state.volume, showVolumeHUD]);
+
+  const handleVolumeDown = useCallback(() => {
+    if (state.currentApp === 'camera') {
+      playCameraShutterSound();
+      setScreenshotFlash(true);
+      setTimeout(() => setScreenshotFlash(false), 300);
+    } else {
+      const nextVol = Math.max(0, state.volume - 6);
+      playVolumeStepSound(nextVol);
+      showVolumeHUD(nextVol);
+    }
+  }, [state.currentApp, state.volume, showVolumeHUD]);
+
+  const handleToggleMute = useCallback(() => {
+    if (state.volume > 0) {
+      previousVolumeRef.current = state.volume;
+      playVolumeStepSound(0);
+      showVolumeHUD(0);
+    } else {
+      const restored = previousVolumeRef.current || 70;
+      playVolumeStepSound(restored);
+      showVolumeHUD(restored);
+    }
+  }, [state.volume, showVolumeHUD]);
+
+  // Global keyboard shortcuts for hardware volume and lock
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if typing in an input / textarea
+      const target = e.target as HTMLElement;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+        return;
+      }
+
+      if (e.key === '+' || e.key === '=' || e.key === ']') {
+        e.preventDefault();
+        handleVolumeUp();
+      } else if (e.key === '-' || e.key === '_' || e.key === '[') {
+        e.preventDefault();
+        handleVolumeDown();
+      } else if (e.key === 'm' || e.key === 'M') {
+        e.preventDefault();
+        handleToggleMute();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      if (volumeHudTimerRef.current) {
+        clearTimeout(volumeHudTimerRef.current);
+      }
+    };
+  }, [handleVolumeUp, handleVolumeDown, handleToggleMute]);
 
   const lockVideoRef = useRef<HTMLVideoElement | null>(null);
   const lockStreamRef = useRef<MediaStream | null>(null);
@@ -179,7 +267,7 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
   };
 
   const handleActionButtonPress = () => {
-    playVolumeStepSound();
+    playVolumeStepSound(state.volume);
     if (state.actionButtonMode === 'flashlight') {
       onUpdateState((s) => ({ ...s, isFlashlightOn: !s.isFlashlightOn }));
     } else if (state.actionButtonMode === 'silent') {
@@ -191,20 +279,6 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
     } else {
       onUpdateState((s) => ({ ...s, isFlashlightOn: !s.isFlashlightOn }));
     }
-  };
-
-  const handleVolumeUp = () => {
-    playVolumeStepSound();
-    if (state.currentApp === 'camera') {
-      triggerScreenshot();
-    } else {
-      onUpdateState((s) => ({ ...s, volume: Math.min(100, s.volume + 10) }));
-    }
-  };
-
-  const handleVolumeDown = () => {
-    playVolumeStepSound();
-    onUpdateState((s) => ({ ...s, volume: Math.max(0, s.volume - 10) }));
   };
 
   const handlePowerButton = () => {
@@ -234,33 +308,47 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
         {/* Hardware Action Button (Left edge top) */}
         <button
           onClick={handleActionButtonPress}
-          title={`Action Button: ${state.actionButtonMode}`}
-          className="absolute -left-1.5 top-28 w-1.5 h-7 bg-neutral-600 hover:bg-amber-400 active:scale-95 rounded-l-md transition-colors cursor-pointer"
-        />
+          title={`Action Button (${state.actionButtonMode}) - Click to toggle`}
+          className="group absolute -left-2 top-28 w-2.5 h-8 bg-neutral-700 hover:bg-amber-500 active:scale-95 active:bg-amber-600 rounded-l-md transition-all cursor-pointer shadow-md flex items-center justify-start pl-0.5"
+        >
+          <span className="w-1 h-3 rounded-full bg-neutral-400 group-hover:bg-white" />
+        </button>
 
         {/* Hardware Volume Up (Left edge) */}
         <button
           onClick={handleVolumeUp}
-          title="Volume Up / Camera Shutter"
-          className="absolute -left-1.5 top-40 w-1.5 h-11 bg-neutral-600 hover:bg-neutral-400 active:scale-95 rounded-l-md transition-colors cursor-pointer"
-        />
+          title="Volume Up (+) / Camera Shutter"
+          className="group absolute -left-2 top-40 w-2.5 h-12 bg-neutral-700 hover:bg-blue-500 active:scale-95 active:bg-blue-600 rounded-l-md transition-all cursor-pointer shadow-md flex items-center justify-start pl-0.5"
+        >
+          <span className="w-1 h-4 rounded-full bg-neutral-400 group-hover:bg-white" />
+        </button>
 
         {/* Hardware Volume Down (Left edge) */}
         <button
           onClick={handleVolumeDown}
-          title="Volume Down"
-          className="absolute -left-1.5 top-54 w-1.5 h-11 bg-neutral-600 hover:bg-neutral-400 active:scale-95 rounded-l-md transition-colors cursor-pointer"
-        />
+          title="Volume Down (-) - Click or press '-' key"
+          className="group absolute -left-2 top-56 w-2.5 h-12 bg-neutral-700 hover:bg-blue-500 active:scale-95 active:bg-blue-600 rounded-l-md transition-all cursor-pointer shadow-md flex items-center justify-start pl-0.5"
+        >
+          <span className="w-1 h-4 rounded-full bg-neutral-400 group-hover:bg-white" />
+        </button>
 
         {/* Hardware Side Power Button (Right edge) */}
         <button
           onClick={handlePowerButton}
           title={state.isLocked ? "Power Button (Wake / Unlock)" : "Power Button (Lock Screen)"}
-          className="absolute -right-1.5 top-40 w-1.5 h-14 bg-neutral-600 hover:bg-neutral-400 active:scale-95 rounded-r-md transition-colors cursor-pointer"
-        />
+          className="group absolute -right-2 top-40 w-2.5 h-16 bg-neutral-700 hover:bg-neutral-500 active:scale-95 active:bg-neutral-400 rounded-r-md transition-all cursor-pointer shadow-md flex items-center justify-end pr-0.5"
+        >
+          <span className="w-1 h-6 rounded-full bg-neutral-400 group-hover:bg-white" />
+        </button>
 
         {/* Screen Display Area */}
         <div className="relative w-full h-full bg-black rounded-[46px] overflow-hidden flex flex-col justify-between border border-black shadow-inner">
+          {/* Interactive iOS Volume HUD Pill */}
+          <VolumeHUD
+            volume={state.volume}
+            isVisible={isVolumeHudVisible}
+            onVolumeChange={showVolumeHUD}
+          />
           {/* Dynamic Island */}
           <DynamicIsland
             state={state}
@@ -595,8 +683,86 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
         </div>
       </div>
 
+      {/* Dedicated Physical Hardware Controls Toolbar */}
+      <div className="mt-3 w-full max-w-[340px] p-2 rounded-2xl bg-neutral-900/90 border border-neutral-800 shadow-md backdrop-blur-md flex flex-col gap-2">
+        <div className="flex items-center justify-between px-1">
+          <div className="flex items-center gap-1.5 text-[11px] font-bold text-neutral-300">
+            <Volume2 className="w-3.5 h-3.5 text-blue-400" />
+            <span>Hardware Buttons</span>
+          </div>
+          <span className="text-[10px] text-neutral-400 font-mono">
+            {state.volume === 0 ? 'Muted' : `${state.volume}%`}
+          </span>
+        </div>
+
+        {/* Volume & Power Button Cluster */}
+        <div className="grid grid-cols-5 gap-1.5">
+          {/* Action Button */}
+          <button
+            onClick={handleActionButtonPress}
+            title={`Action Button (${state.actionButtonMode})`}
+            className="flex flex-col items-center justify-center p-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 active:scale-95 text-amber-400 text-[10px] font-medium transition-all"
+          >
+            <Zap className="w-3.5 h-3.5 mb-0.5" />
+            <span>Action</span>
+          </button>
+
+          {/* Volume Down */}
+          <button
+            onClick={handleVolumeDown}
+            title="Volume Down (- key)"
+            className="flex flex-col items-center justify-center p-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 active:scale-95 text-neutral-200 text-[10px] font-medium transition-all"
+          >
+            <Minus className="w-3.5 h-3.5 mb-0.5 text-blue-400" />
+            <span>Vol -</span>
+          </button>
+
+          {/* Mute Toggle */}
+          <button
+            onClick={handleToggleMute}
+            title="Mute / Unmute (M key)"
+            className={`flex flex-col items-center justify-center p-1.5 rounded-xl active:scale-95 text-[10px] font-medium transition-all ${
+              state.volume === 0
+                ? 'bg-rose-950/80 border border-rose-600/50 text-rose-300'
+                : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200'
+            }`}
+          >
+            {state.volume === 0 ? (
+              <VolumeX className="w-3.5 h-3.5 mb-0.5 text-rose-400" />
+            ) : (
+              <Volume2 className="w-3.5 h-3.5 mb-0.5 text-emerald-400" />
+            )}
+            <span>{state.volume === 0 ? 'Unmute' : 'Mute'}</span>
+          </button>
+
+          {/* Volume Up */}
+          <button
+            onClick={handleVolumeUp}
+            title="Volume Up (+ key) / Shutter"
+            className="flex flex-col items-center justify-center p-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 active:scale-95 text-neutral-200 text-[10px] font-medium transition-all"
+          >
+            <Plus className="w-3.5 h-3.5 mb-0.5 text-blue-400" />
+            <span>Vol +</span>
+          </button>
+
+          {/* Side Power Lock */}
+          <button
+            onClick={handlePowerButton}
+            title="Side Power Button (Lock / Wake)"
+            className={`flex flex-col items-center justify-center p-1.5 rounded-xl active:scale-95 text-[10px] font-medium transition-all ${
+              state.isLocked
+                ? 'bg-amber-950/80 border border-amber-600/50 text-amber-300'
+                : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200'
+            }`}
+          >
+            <Power className="w-3.5 h-3.5 mb-0.5 text-neutral-300" />
+            <span>{state.isLocked ? 'Wake' : 'Lock'}</span>
+          </button>
+        </div>
+      </div>
+
       {/* Quick Interactive Gesture Action Buttons beneath Simulator */}
-      <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5 max-w-[340px]">
+      <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5 max-w-[340px]">
         <button
           onClick={goHome}
           className="px-2.5 py-1 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-[11px] font-medium transition-colors"
