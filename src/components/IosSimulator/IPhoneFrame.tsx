@@ -28,6 +28,8 @@ import { CalculatorApp } from './apps/CalculatorApp';
 import { ClockApp } from './apps/ClockApp';
 import { WeatherApp } from './apps/UtilityApps';
 import { FounderApp } from './apps/FounderApp';
+import { MusicApp } from './apps/MusicApp';
+import { YouTubeApp } from './apps/YouTubeApp';
 import { WallpaperBackground } from './WallpaperBackground';
 import { playLockSound, playUnlockSound, playVolumeStepSound, playCameraShutterSound } from '../../utils/audioUtils';
 
@@ -374,6 +376,23 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
                   <FounderApp
                     state={state}
                     onUpdateState={onUpdateState}
+                    onClose={goHome}
+                  />
+                )}
+
+                {state.currentApp === 'music' && (
+                  <MusicApp
+                    state={state}
+                    onUpdateState={onUpdateState}
+                    onOpenApp={openApp}
+                  />
+                )}
+
+                {state.currentApp === 'youtube' && (
+                  <YouTubeApp
+                    state={state}
+                    onUpdateState={onUpdateState}
+                    onOpenApp={openApp}
                     onClose={goHome}
                   />
                 )}

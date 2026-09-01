@@ -30,7 +30,9 @@ export const AppSwitcher: React.FC<AppSwitcherProps> = ({
     phone: { name: 'Phone', icon: '📞' },
     founder: { name: 'Founder', icon: '★' },
     maps: { name: 'Maps', icon: '🗺️' },
-    health: { name: 'Health', icon: '❤️' }
+    health: { name: 'Health', icon: '❤️' },
+    music: { name: 'Music', icon: '🎵' },
+    youtube: { name: 'YouTube', icon: '▶️' }
   };
 
   const appsInSwitcher = state.recentApps.length > 0

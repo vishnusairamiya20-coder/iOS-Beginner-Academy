@@ -20,6 +20,7 @@ import {
   Pause
 } from 'lucide-react';
 import { SimulatorState } from '../../types';
+import { startMusicSynthesis, stopMusicSynthesis, playVolumeStepSound } from '../../utils/audioUtils';
 
 interface ControlCenterProps {
   state: SimulatorState;
@@ -126,10 +127,16 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
           </div>
 
           {/* Now Playing Widget */}
-          <div className="bg-neutral-800/80 backdrop-blur-md rounded-3xl p-3.5 flex flex-col justify-between shadow-lg border border-white/10">
+          <div
+            onClick={() => {
+              onClose();
+              onUpdateState((s) => ({ ...s, currentApp: 'music' }));
+            }}
+            className="bg-neutral-800/80 backdrop-blur-md rounded-3xl p-3.5 flex flex-col justify-between shadow-lg border border-white/10 cursor-pointer hover:bg-neutral-750 transition-colors"
+          >
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-semibold text-neutral-400">Now Playing</span>
-              <Music className="w-3.5 h-3.5 text-neutral-400" />
+              <Music className="w-3.5 h-3.5 text-rose-400" />
             </div>
             <div>
               <p className="font-bold text-xs truncate">{state.currentSong.title}</p>
@@ -139,11 +146,22 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onUpdateState((s) => ({
-                    ...s,
-                    isPlayingMusic: !s.isPlayingMusic,
-                    dynamicIslandState: !s.isPlayingMusic ? 'music' : 'idle'
-                  }));
+                  playVolumeStepSound();
+                  if (state.isPlayingMusic) {
+                    stopMusicSynthesis();
+                    onUpdateState((s) => ({
+                      ...s,
+                      isPlayingMusic: false,
+                      dynamicIslandState: s.isTimerRunning ? 'timer' : 'idle'
+                    }));
+                  } else {
+                    startMusicSynthesis('pop');
+                    onUpdateState((s) => ({
+                      ...s,
+                      isPlayingMusic: true,
+                      dynamicIslandState: 'music'
+                    }));
+                  }
                 }}
                 className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30"
               >

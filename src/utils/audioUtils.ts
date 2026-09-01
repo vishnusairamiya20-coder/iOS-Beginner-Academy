@@ -254,3 +254,166 @@ export function stopPhoneRingTone() {
     ringInterval = null;
   }
 }
+
+// ----------------------------------------------------
+// Real Musical Synthesis Engine for Apple Music Player
+// ----------------------------------------------------
+let musicInterval: ReturnType<typeof setInterval> | null = null;
+let currentTrackGenre = 'pop';
+let noteStep = 0;
+
+// Musical scale frequencies (Hz)
+const NOTE_FREQS: Record<string, number> = {
+  'C3': 130.81, 'D3': 146.83, 'E3': 164.81, 'F3': 174.61, 'G3': 196.00, 'A3': 220.00, 'B3': 246.94,
+  'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'F4': 349.23, 'G4': 392.00, 'A4': 440.00, 'B4': 493.88,
+  'C5': 523.25, 'D5': 587.33, 'E5': 659.25, 'F5': 698.46, 'G5': 783.99, 'A5': 880.00, 'B5': 987.77,
+  'C6': 1046.50
+};
+
+// Polyphonic track patterns
+const TRACK_PATTERNS: Record<string, { chords: string[][]; bass: string[]; tempoMs: number }> = {
+  pop: {
+    tempoMs: 250,
+    bass: ['C3', 'C3', 'G3', 'G3', 'A3', 'A3', 'F3', 'F3'],
+    chords: [
+      ['C4', 'E4', 'G4', 'C5'],
+      ['E4', 'G4', 'C5'],
+      ['G3', 'B3', 'D4', 'G4'],
+      ['B3', 'D4', 'G4'],
+      ['A3', 'C4', 'E4', 'A4'],
+      ['C4', 'E4', 'A4'],
+      ['F3', 'A3', 'C4', 'F4'],
+      ['A3', 'C4', 'E4']
+    ]
+  },
+  lofi: {
+    tempoMs: 380,
+    bass: ['D3', 'D3', 'G3', 'G3', 'C3', 'C3', 'A3', 'A3'],
+    chords: [
+      ['D4', 'F4', 'A4', 'C5'],
+      ['F4', 'A4', 'C5', 'E5'],
+      ['G3', 'B3', 'D4', 'F4'],
+      ['B3', 'D4', 'F4', 'A4'],
+      ['C4', 'E4', 'G4', 'B4'],
+      ['E4', 'G4', 'B4', 'D5'],
+      ['A3', 'C4', 'E4', 'G4'],
+      ['C4', 'E4', 'G4']
+    ]
+  },
+  synthwave: {
+    tempoMs: 200,
+    bass: ['A3', 'A3', 'F3', 'F3', 'C3', 'C3', 'G3', 'G3'],
+    chords: [
+      ['A4', 'C5', 'E5'],
+      ['C5', 'E5', 'A5'],
+      ['F4', 'A4', 'C5'],
+      ['A4', 'C5', 'F5'],
+      ['C4', 'E4', 'G4'],
+      ['E4', 'G4', 'C5'],
+      ['G4', 'B4', 'D5'],
+      ['B4', 'D5', 'G5']
+    ]
+  },
+  acoustic: {
+    tempoMs: 300,
+    bass: ['G3', 'G3', 'E3', 'E3', 'C3', 'C3', 'D3', 'D3'],
+    chords: [
+      ['G4', 'B4', 'D5'],
+      ['B4', 'D5', 'G5'],
+      ['E4', 'G4', 'B4'],
+      ['G4', 'B4', 'E5'],
+      ['C4', 'E4', 'G4'],
+      ['E4', 'G4', 'C5'],
+      ['D4', 'F4', 'A4'],
+      ['F4', 'A4', 'D5']
+    ]
+  },
+  classical: {
+    tempoMs: 350,
+    bass: ['C3', 'E3', 'G3', 'C4', 'A3', 'C4', 'E4', 'A4'],
+    chords: [
+      ['E4', 'G4', 'C5', 'E5'],
+      ['G4', 'C5', 'E5'],
+      ['G3', 'D4', 'G4', 'B4'],
+      ['D4', 'G4', 'B4'],
+      ['C4', 'E4', 'A4', 'C5'],
+      ['E4', 'A4', 'C5'],
+      ['F3', 'C4', 'F4', 'A4'],
+      ['C4', 'F4', 'A4']
+    ]
+  }
+};
+
+export function startMusicSynthesis(genre: string = 'pop') {
+  stopMusicSynthesis();
+  currentTrackGenre = TRACK_PATTERNS[genre] ? genre : 'pop';
+  const pattern = TRACK_PATTERNS[currentTrackGenre];
+  noteStep = 0;
+
+  const playStep = () => {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    const stepIdx = noteStep % pattern.chords.length;
+
+    // Bass note (Warm low sine)
+    const bassNote = pattern.bass[stepIdx % pattern.bass.length];
+    const bassFreq = NOTE_FREQS[bassNote] || 130.81;
+    const bassOsc = ctx.createOscillator();
+    const bassGain = ctx.createGain();
+    bassOsc.type = 'triangle';
+    bassOsc.frequency.setValueAtTime(bassFreq, now);
+    bassGain.gain.setValueAtTime(0.09, now);
+    bassGain.gain.exponentialRampToValueAtTime(0.001, now + (pattern.tempoMs / 1000) * 0.9);
+    bassOsc.connect(bassGain);
+    bassGain.connect(ctx.destination);
+    bassOsc.start(now);
+    bassOsc.stop(now + (pattern.tempoMs / 1000) * 0.9);
+
+    // Chords / Melody (Warm smooth sine/soft square)
+    const chord = pattern.chords[stepIdx];
+    chord.forEach((note, nIdx) => {
+      const freq = NOTE_FREQS[note] || 440;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = currentTrackGenre === 'synthwave' ? 'sawtooth' : 'sine';
+      osc.frequency.setValueAtTime(freq, now + nIdx * 0.015);
+      
+      const volume = currentTrackGenre === 'synthwave' ? 0.03 : 0.05;
+      gain.gain.setValueAtTime(volume, now + nIdx * 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0005, now + (pattern.tempoMs / 1000) * 0.85);
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + nIdx * 0.015);
+      osc.stop(now + (pattern.tempoMs / 1000) * 0.85);
+    });
+
+    // Gentle hi-hat / rhythm tap on every other beat
+    if (stepIdx % 2 === 1) {
+      const clickOsc = ctx.createOscillator();
+      const clickGain = ctx.createGain();
+      clickOsc.type = 'highpass' as any;
+      clickOsc.frequency.setValueAtTime(3500, now);
+      clickGain.gain.setValueAtTime(0.015, now);
+      clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+      clickOsc.connect(clickGain);
+      clickGain.connect(ctx.destination);
+      clickOsc.start(now);
+      clickOsc.stop(now + 0.04);
+    }
+
+    noteStep++;
+  };
+
+  playStep();
+  musicInterval = setInterval(playStep, pattern.tempoMs);
+}
+
+export function stopMusicSynthesis() {
+  if (musicInterval) {
+    clearInterval(musicInterval);
+    musicInterval = null;
+  }
+}
+

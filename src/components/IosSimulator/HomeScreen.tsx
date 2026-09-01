@@ -107,6 +107,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       name: 'App Store',
       iconBg: 'bg-gradient-to-b from-blue-400 to-blue-600',
       iconElement: <span className="text-xl font-bold text-white">A</span>
+    },
+    {
+      id: 'youtube',
+      name: 'YouTube',
+      badge: '●',
+      iconBg: 'bg-gradient-to-b from-red-600 to-red-700',
+      iconElement: <span className="text-2xl font-bold text-white">▶️</span>
+    },
+    {
+      id: 'music',
+      name: 'Music',
+      iconBg: 'bg-gradient-to-tr from-pink-500 via-rose-600 to-red-500',
+      iconElement: <Music className="w-7 h-7 text-white" />
     }
   ];
 
@@ -131,9 +144,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       iconElement: <MessageCircle className="w-7 h-7 text-white" />
     },
     {
-      id: 'notes',
+      id: 'music',
       name: 'Music',
-      iconBg: 'bg-gradient-to-b from-pink-500 to-rose-600',
+      iconBg: 'bg-gradient-to-tr from-pink-500 via-rose-600 to-red-500',
       iconElement: <Music className="w-7 h-7 text-white" />
     }
   ];

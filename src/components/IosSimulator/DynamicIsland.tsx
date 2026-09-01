@@ -1,11 +1,12 @@
 import React from 'react';
 import { Play, Pause, Square, Music, Timer as TimerIcon, Phone, Volume2 } from 'lucide-react';
-import { SimulatorState } from '../../types';
+import { SimulatorState, IosAppId } from '../../types';
+import { startMusicSynthesis, stopMusicSynthesis, playVolumeStepSound } from '../../utils/audioUtils';
 
 interface DynamicIslandProps {
   state: SimulatorState;
   onUpdateState: (updater: (prev: SimulatorState) => SimulatorState) => void;
-  onOpenApp: (appId: any) => void;
+  onOpenApp: (appId: IosAppId) => void;
 }
 
 export const DynamicIsland: React.FC<DynamicIslandProps> = ({ state, onUpdateState, onOpenApp }) => {
@@ -28,22 +29,29 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({ state, onUpdateSta
         onUpdateState((s) => ({ ...s, dynamicIslandState: 'expanded_music' }));
       }
     } else {
-      // Idle state - toggle music simulation to show beginner how it works!
+      // Open music app
+      onOpenApp('music');
+    }
+  };
+
+  const toggleMusicPlay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    playVolumeStepSound();
+    if (state.isPlayingMusic) {
+      stopMusicSynthesis();
+      onUpdateState((s) => ({
+        ...s,
+        isPlayingMusic: false,
+        dynamicIslandState: s.isTimerRunning ? 'timer' : 'idle'
+      }));
+    } else {
+      startMusicSynthesis('pop');
       onUpdateState((s) => ({
         ...s,
         isPlayingMusic: true,
         dynamicIslandState: 'music'
       }));
     }
-  };
-
-  const toggleMusicPlay = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onUpdateState((s) => ({
-      ...s,
-      isPlayingMusic: !s.isPlayingMusic,
-      dynamicIslandState: !s.isPlayingMusic ? 'music' : 'idle'
-    }));
   };
 
   const stopTimer = (e: React.MouseEvent) => {
