@@ -18,10 +18,12 @@ import {
   MapPin,
   Heart,
   Sparkles,
-  Award
+  Award,
+  Bookmark
 } from 'lucide-react';
 import { SimulatorState, IosAppId } from '../../types';
 import { WallpaperBackground } from './WallpaperBackground';
+import { useLiveClock } from '../../utils/dateTime';
 
 interface HomeScreenProps {
   state: SimulatorState;
@@ -45,6 +47,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onUpdateState
 }) => {
   const [activeMenuApp, setActiveMenuApp] = useState<IosAppId | null>(null);
+  const liveClock = useLiveClock();
 
   const mainApps: AppIconConfig[] = [
     {
@@ -56,6 +59,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         <div className="flex flex-col items-center">
           <Sparkles className="w-6 h-6 text-amber-200" />
           <span className="text-[8px] font-black tracking-tighter text-white uppercase -mt-0.5">VSR</span>
+        </div>
+      )
+    },
+    {
+      id: 'pinterest',
+      name: 'Pinterest',
+      badge: '●',
+      iconBg: 'bg-gradient-to-b from-[#E60023] via-[#cc001f] to-[#ad081b]',
+      iconElement: (
+        <div className="w-full h-full flex items-center justify-center">
+          <span className="text-2xl font-black text-white italic tracking-tighter">P</span>
         </div>
       )
     },
@@ -206,15 +220,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
           {/* Calendar / Battery Widget */}
           <div
-            onClick={() => onOpenApp('settings')}
+            onClick={() => onOpenApp('clock')}
             className="h-28 rounded-3xl bg-neutral-900/70 backdrop-blur-md p-3 text-white flex flex-col justify-between shadow-lg border border-white/20 cursor-pointer hover:scale-[1.02] transition-transform"
           >
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-red-400">TODAY</span>
+              <span className="text-[11px] font-bold text-red-400 uppercase">{liveClock.dayOfWeekShort} • {liveClock.monthShort}</span>
               <Battery className="w-4 h-4 text-green-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold">27</p>
+              <p className="text-2xl font-bold">{liveClock.dayOfMonth}</p>
               <p className="text-[10px] text-neutral-300">iPhone Battery {state.batteryLevel}%</p>
             </div>
             <div className="w-full bg-neutral-700 h-1 rounded-full overflow-hidden">

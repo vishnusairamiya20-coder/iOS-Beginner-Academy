@@ -1,6 +1,7 @@
 import React from 'react';
 import { Lock, Flashlight, Camera, MessageSquare, Bell, X, Calendar, Check } from 'lucide-react';
 import { SimulatorState } from '../../types';
+import { useLiveClock } from '../../utils/dateTime';
 
 interface NotificationCenterProps {
   state: SimulatorState;
@@ -15,6 +16,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
   onClose,
   onOpenApp
 }) => {
+  const liveClock = useLiveClock();
+
   const dismissNotification = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     onUpdateState((s) => ({
@@ -33,10 +36,10 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
         <div className="text-center space-y-1 pt-2">
           <div className="flex items-center justify-center gap-1 text-xs text-white/80">
             <Lock className="w-3.5 h-3.5" />
-            <span className="font-medium text-[11px]">Thursday, August 27</span>
+            <span className="font-medium text-[11px]">{liveClock.fullDateString}</span>
           </div>
           <div className="text-6xl font-extralight tracking-tight font-sans">
-            9:41
+            {liveClock.timeString}
           </div>
         </div>
 

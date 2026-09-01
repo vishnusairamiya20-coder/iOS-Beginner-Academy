@@ -22,6 +22,7 @@ export const SpotlightSearch: React.FC<SpotlightSearchProps> = ({
     { id: 'photos', name: 'Photos', icon: '🌸', category: 'Creativity' },
     { id: 'safari', name: 'Safari', icon: '🧭', category: 'Utilities' },
     { id: 'appstore', name: 'App Store', icon: '🅰️', category: 'Utilities' },
+    { id: 'pinterest', name: 'Pinterest', icon: '📌', category: 'Social & Inspiration' },
     { id: 'weather', name: 'Weather', icon: '☀️', category: 'Information' },
     { id: 'calculator', name: 'Calculator', icon: '🔢', category: 'Utilities' },
     { id: 'clock', name: 'Clock', icon: '⏰', category: 'Utilities' },

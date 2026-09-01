@@ -34,9 +34,11 @@ import { WeatherApp } from './apps/UtilityApps';
 import { FounderApp } from './apps/FounderApp';
 import { MusicApp } from './apps/MusicApp';
 import { YouTubeApp } from './apps/YouTubeApp';
+import { PinterestApp } from './apps/PinterestApp';
 import { WallpaperBackground } from './WallpaperBackground';
 import { PasscodeKeypad } from './PasscodeKeypad';
 import { playLockSound, playUnlockSound, playVolumeStepSound, playCameraShutterSound, playFaceIdSuccessSound, playBiometricTickSound } from '../../utils/audioUtils';
+import { useLiveClock } from '../../utils/dateTime';
 
 interface IPhoneFrameProps {
   state: SimulatorState;
@@ -49,6 +51,7 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
   onUpdateState,
   onTriggerGesture
 }) => {
+  const liveClock = useLiveClock();
   const [swipeStartY, setSwipeStartY] = useState<number | null>(null);
   const [screenshotFlash, setScreenshotFlash] = useState(false);
   const [isFaceIdScanning, setIsFaceIdScanning] = useState(false);
@@ -273,7 +276,7 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
               title="Click to pull down Notification Center"
               className="cursor-pointer hover:opacity-80 transition-opacity flex items-center gap-1"
             >
-              <span>9:41</span>
+              <span>{liveClock.timeString}</span>
               {state.isDoNotDisturb && <span className="text-[10px]">🌙</span>}
             </div>
 
@@ -362,8 +365,8 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
                       <Lock className="w-4 h-4 opacity-80" />
                     )}
                   </div>
-                  <p className="text-xs font-semibold uppercase tracking-wider opacity-90">Wednesday, August 27</p>
-                  <h1 className="text-6xl font-light tracking-tighter">9:41</h1>
+                  <p className="text-xs font-semibold uppercase tracking-wider opacity-90">{liveClock.fullDateString}</p>
+                  <h1 className="text-6xl font-light tracking-tighter">{liveClock.timeString}</h1>
                 </div>
 
                 {/* Notification Banner on Lock Screen */}
@@ -493,7 +496,19 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
                 )}
 
                 {state.currentApp === 'appstore' && (
-                  <AppStoreApp state={state} />
+                  <AppStoreApp
+                    state={state}
+                    onOpenApp={openApp}
+                    onUpdateState={onUpdateState}
+                  />
+                )}
+
+                {state.currentApp === 'pinterest' && (
+                  <PinterestApp
+                    state={state}
+                    onUpdateState={onUpdateState}
+                    onClose={goHome}
+                  />
                 )}
 
                 {state.currentApp === 'founder' && (

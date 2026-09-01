@@ -110,7 +110,7 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
     { id: 'p8', emoji: '🌃', title: 'Tokyo Skyline at Night', date: 'Aug 10, 10:15 PM', isFavorite: true }
   ],
 
-  installedApps: ['instagram', 'whatsapp', 'youtube', 'tiktok', 'spotify', 'netflix', 'chatgpt'],
+  installedApps: ['instagram', 'whatsapp', 'youtube', 'pinterest', 'tiktok', 'spotify', 'netflix', 'chatgpt'],
 
   dynamicIslandState: 'idle',
   timerSecondsRemaining: 0,

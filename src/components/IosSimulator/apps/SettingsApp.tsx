@@ -38,6 +38,7 @@ import { SimulatorState } from '../../../types';
 import { playDtmfTone, playVolumeStepSound, playFaceIdSuccessSound, playLockSound } from '../../../utils/audioUtils';
 import { WallpaperBackground } from '../WallpaperBackground';
 import { FaceIdEnrollmentModal, FaceIdPrompt } from '../FaceIdEnrollmentModal';
+import { useLiveClock } from '../../../utils/dateTime';
 import { PasscodeKeypad } from '../PasscodeKeypad';
 
 interface SettingsAppProps {
@@ -47,6 +48,7 @@ interface SettingsAppProps {
 }
 
 export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }) => {
+  const liveClock = useLiveClock();
   const [activeSubpage, setActiveSubpage] = useState<string | null>(null);
   const [editAppleIdModal, setEditAppleIdModal] = useState(false);
   const [fakeName, setFakeName] = useState(state.appleId.name);
@@ -672,11 +674,11 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
             <div className="relative h-44 rounded-2xl overflow-hidden shadow-inner border border-neutral-700/50 flex flex-col justify-between p-3">
               <WallpaperBackground wallpaper={state.wallpaper} isDarkMode={state.isDarkMode} />
               <div className="relative z-10 flex justify-between items-center text-[10px] text-white/90 font-bold">
-                <span>9:41</span>
+                <span>{liveClock.timeString}</span>
                 <span>🔒 Lock & Home Screen</span>
               </div>
               <div className="relative z-10 text-center text-white/90 font-light text-2xl">
-                Wednesday, Aug 27
+                {liveClock.fullDateString}
               </div>
               <div className="relative z-10 flex justify-around py-1 bg-black/30 backdrop-blur-md rounded-xl">
                 <span className="text-xs">📞</span>

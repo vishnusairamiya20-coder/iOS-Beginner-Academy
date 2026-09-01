@@ -15,7 +15,8 @@ export type IosAppId =
   | 'maps'
   | 'health'
   | 'music'
-  | 'youtube';
+  | 'youtube'
+  | 'pinterest';
 
 export interface AppIconInfo {
   id: IosAppId;

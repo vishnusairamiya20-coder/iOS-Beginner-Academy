@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Play, Pause, RotateCcw, Clock as ClockIcon, Bell, Timer as TimerIcon } from 'lucide-react';
+import { Play, Pause, RotateCcw, Clock as ClockIcon, Bell, Timer as TimerIcon, Plus, Check } from 'lucide-react';
 import { SimulatorState } from '../../../types';
+import { useLiveClock, getWorldCityTime } from '../../../utils/dateTime';
 
 interface ClockAppProps {
   state: SimulatorState;
@@ -8,8 +9,21 @@ interface ClockAppProps {
 }
 
 export const ClockApp: React.FC<ClockAppProps> = ({ state, onUpdateState }) => {
-  const [activeTab, setActiveTab] = useState<'world' | 'alarm' | 'timer'>('timer');
+  const [activeTab, setActiveTab] = useState<'world' | 'alarm' | 'timer'>('world');
   const [selectedMinutes, setSelectedMinutes] = useState(5);
+  const liveClock = useLiveClock();
+
+  const [alarms, setAlarms] = useState([
+    { id: '1', time: '07:00 AM', label: 'Morning Routine', on: true },
+    { id: '2', time: '08:30 AM', label: 'Work & Deep Focus', on: false },
+    { id: '3', time: '10:00 PM', label: 'Wind Down', on: true }
+  ]);
+
+  const toggleAlarm = (id: string) => {
+    setAlarms((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, on: !a.on } : a))
+    );
+  };
 
   const startTimer = () => {
     const totalSeconds = selectedMinutes * 60;
@@ -36,16 +50,45 @@ export const ClockApp: React.FC<ClockAppProps> = ({ state, onUpdateState }) => {
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
+  const worldCities = [
+    { city: 'Local Time', zone: Intl.DateTimeFormat().resolvedOptions().timeZone, label: 'Your Current Timezone' },
+    { city: 'Cupertino', zone: 'America/Los_Angeles', label: 'Pacific Time (Apple HQ)' },
+    { city: 'New York', zone: 'America/New_York', label: 'Eastern Time' },
+    { city: 'London', zone: 'Europe/London', label: 'Greenwich Mean Time' },
+    { city: 'Tokyo', zone: 'Asia/Tokyo', label: 'Japan Standard Time' }
+  ];
+
   return (
     <div className="h-full flex flex-col bg-black text-white select-none text-xs font-sans">
       {/* Header */}
       <div className="pt-12 pb-2 px-4 border-b border-neutral-800 flex justify-between items-center">
-        <h1 className="text-xl font-bold tracking-tight capitalize">{activeTab}</h1>
+        <h1 className="text-xl font-bold tracking-tight capitalize">
+          {activeTab === 'world' ? 'World Clock' : activeTab}
+        </h1>
+        <span className="text-xs text-amber-500 font-medium font-mono">{liveClock.timeWithSeconds}</span>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center">
+      <div className="flex-1 overflow-y-auto p-4 flex flex-col justify-start space-y-3">
+        {activeTab === 'world' && (
+          <div className="w-full space-y-2.5">
+            {worldCities.map((c) => {
+              const cityTime = getWorldCityTime(c.zone, liveClock.now);
+              return (
+                <div key={c.city} className="flex justify-between items-center p-3 rounded-2xl bg-neutral-900 border border-neutral-800 shadow-sm">
+                  <div>
+                    <p className="text-[10px] text-neutral-400 font-semibold">{cityTime.diff}</p>
+                    <p className="text-base font-bold">{c.city}</p>
+                    <p className="text-[9px] text-neutral-500">{c.label}</p>
+                  </div>
+                  <span className="text-2xl font-light font-mono tracking-tight text-white">{cityTime.time}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         {activeTab === 'timer' && (
-          <div className="w-full flex flex-col items-center space-y-6">
+          <div className="w-full flex-1 flex flex-col items-center justify-center space-y-6">
             {state.isTimerRunning ? (
               <div className="flex flex-col items-center space-y-4">
                 <div className="w-44 h-44 rounded-full border-4 border-amber-500/30 border-t-amber-500 flex items-center justify-center shadow-xl animate-spin-slow">
@@ -74,7 +117,7 @@ export const ClockApp: React.FC<ClockAppProps> = ({ state, onUpdateState }) => {
                 </div>
 
                 <div className="flex gap-2">
-                  {[1, 3, 5, 10, 15].map((mins) => (
+                  {[1, 3, 5, 10, 15, 30].map((mins) => (
                     <button
                       key={mins}
                       onClick={() => setSelectedMinutes(mins)}
@@ -100,36 +143,19 @@ export const ClockApp: React.FC<ClockAppProps> = ({ state, onUpdateState }) => {
           </div>
         )}
 
-        {activeTab === 'world' && (
-          <div className="w-full space-y-3">
-            {[
-              { city: 'Cupertino', time: '9:41 AM', diff: 'Local Time' },
-              { city: 'London', time: '5:41 PM', diff: '+8 HRS' },
-              { city: 'Tokyo', time: '2:41 AM', diff: '+17 HRS, Tomorrow' }
-            ].map((c) => (
-              <div key={c.city} className="flex justify-between items-center p-3 rounded-xl bg-neutral-900 border border-neutral-800">
-                <div>
-                  <p className="text-[11px] text-neutral-400">{c.diff}</p>
-                  <p className="text-base font-semibold">{c.city}</p>
-                </div>
-                <span className="text-2xl font-light font-mono">{c.time}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
         {activeTab === 'alarm' && (
           <div className="w-full space-y-3">
-            {[
-              { time: '07:00 AM', label: 'Morning Alarm', on: true },
-              { time: '08:30 AM', label: 'Work', on: false }
-            ].map((a) => (
-              <div key={a.time} className="flex justify-between items-center p-3 rounded-xl bg-neutral-900 border border-neutral-800">
+            {alarms.map((a) => (
+              <div
+                key={a.id}
+                onClick={() => toggleAlarm(a.id)}
+                className="flex justify-between items-center p-3.5 rounded-2xl bg-neutral-900 border border-neutral-800 cursor-pointer hover:bg-neutral-800/80 transition-colors"
+              >
                 <div>
                   <span className={`text-2xl font-light font-mono ${a.on ? 'text-white' : 'text-neutral-500'}`}>{a.time}</span>
-                  <p className="text-neutral-400 text-[11px]">{a.label}</p>
+                  <p className="text-neutral-400 text-[11px] font-medium">{a.label}</p>
                 </div>
-                <div className={`w-10 h-6 rounded-full p-0.5 flex items-center ${a.on ? 'bg-green-500 justify-end' : 'bg-neutral-700 justify-start'}`}>
+                <div className={`w-11 h-6 rounded-full p-0.5 flex items-center transition-colors ${a.on ? 'bg-green-500 justify-end' : 'bg-neutral-700 justify-start'}`}>
                   <div className="w-5 h-5 rounded-full bg-white shadow-xs" />
                 </div>
               </div>

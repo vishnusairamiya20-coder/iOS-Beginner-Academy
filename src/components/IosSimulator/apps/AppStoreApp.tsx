@@ -199,6 +199,21 @@ const STORE_CATALOG: StoreApp[] = [
     screenshots: ['Bite-Sized Lessons', 'Streak Widget', 'Interactive Stories']
   },
   {
+    id: 'pinterest',
+    name: 'Pinterest',
+    subtitle: 'Visual Discovery & Creative Ideas',
+    category: 'Social',
+    icon: '📌',
+    iconBg: 'from-red-600 to-rose-700',
+    rating: 4.8,
+    reviewsCount: '28M',
+    developer: 'Pinterest, Inc.',
+    ageRating: '12+',
+    sizeMB: 155,
+    description: 'Find creative ideas for home design, style inspirations, aesthetic iPhone wallpapers, recipes, and travel moodboards. Save what inspires you.',
+    screenshots: ['Aesthetic Masonry Feed', 'Visual Search & Lens', 'Save Pins to Boards', 'Set Wallpapers Directly']
+  },
+  {
     id: 'roblox',
     name: 'Roblox',
     subtitle: 'Explore Virtual Worlds',
@@ -215,13 +230,19 @@ const STORE_CATALOG: StoreApp[] = [
   }
 ];
 
-export const AppStoreApp: React.FC<{ state: SimulatorState }> = ({ state }) => {
+interface AppStoreAppProps {
+  state: SimulatorState;
+  onOpenApp?: (app: any) => void;
+  onUpdateState?: (updater: (prev: SimulatorState) => SimulatorState) => void;
+}
+
+export const AppStoreApp: React.FC<AppStoreAppProps> = ({ state, onOpenApp, onUpdateState }) => {
   const [activeTab, setActiveTab] = useState<'today' | 'games' | 'apps' | 'search'>('today');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedApp, setSelectedApp] = useState<StoreApp | null>(null);
   const [downloadingAppId, setDownloadingAppId] = useState<string | null>(null);
   const [downloadProgress, setDownloadProgress] = useState<number>(0);
-  const [installedAppIds, setInstalledAppIds] = useState<string[]>(state.installedApps || ['instagram', 'whatsapp', 'youtube']);
+  const [installedAppIds, setInstalledAppIds] = useState<string[]>(state.installedApps || ['instagram', 'whatsapp', 'youtube', 'pinterest']);
   const [faceIdPrompt, setFaceIdPrompt] = useState<string | null>(null);
 
   const handleInstall = (app: StoreApp) => {
@@ -237,6 +258,10 @@ export const AppStoreApp: React.FC<{ state: SimulatorState }> = ({ state }) => {
             clearInterval(interval);
             setDownloadingAppId(null);
             setInstalledAppIds((ids) => [...ids, app.id]);
+            onUpdateState?.((s) => ({
+              ...s,
+              installedApps: Array.from(new Set([...(s.installedApps || []), app.id]))
+            }));
             return 100;
           }
           return prev + 25;
@@ -293,7 +318,14 @@ export const AppStoreApp: React.FC<{ state: SimulatorState }> = ({ state }) => {
                 
                 <div className="mt-3 flex items-center gap-3">
                   {installedAppIds.includes(selectedApp.id) ? (
-                    <button className="px-5 py-1 rounded-full bg-neutral-200 dark:bg-neutral-800 text-blue-500 font-bold text-xs">
+                    <button
+                      onClick={() => {
+                        if (onOpenApp) {
+                          onOpenApp(selectedApp.id);
+                        }
+                      }}
+                      className="px-5 py-1 rounded-full bg-neutral-200 dark:bg-neutral-800 text-blue-500 hover:bg-blue-500 hover:text-white font-bold text-xs cursor-pointer transition-colors"
+                    >
                       OPEN
                     </button>
                   ) : downloadingAppId === selectedApp.id ? (
