@@ -5,6 +5,7 @@ export type IosAppId =
   | 'camera'
   | 'photos'
   | 'safari'
+  | 'chrome'
   | 'appstore'
   | 'weather'
   | 'calculator'

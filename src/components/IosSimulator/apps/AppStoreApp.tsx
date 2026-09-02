@@ -34,6 +34,21 @@ interface StoreApp {
 
 const STORE_CATALOG: StoreApp[] = [
   {
+    id: 'chrome',
+    name: 'Google Chrome',
+    subtitle: 'Fast & Secure Web Browser',
+    category: 'Productivity',
+    icon: '🌐',
+    iconBg: 'from-red-500 via-yellow-500 to-blue-500',
+    rating: 4.8,
+    reviewsCount: '28M',
+    developer: 'Google LLC',
+    ageRating: '4+',
+    sizeMB: 185,
+    description: 'Get the fast, secure browser that Google built. Sync bookmarks, use Gemini AI, browse in Incognito mode, and search with Google.',
+    screenshots: ['Incognito Private Browsing', 'Google Search Integration', 'Multi-tab Sync']
+  },
+  {
     id: 'instagram',
     name: 'Instagram',
     subtitle: 'Photo & Video Sharing',

@@ -559,6 +559,7 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
 
           <div className={`rounded-2xl divide-y divide-neutral-200 dark:divide-neutral-800 shadow-xs ${state.isDarkMode ? 'bg-neutral-900' : 'bg-white'}`}>
             {[
+              { id: 'siri', name: 'Siri & Apple Intelligence', icon: '✨' },
               { id: 'flashlight', name: 'Flashlight', icon: '🔦' },
               { id: 'silent', name: 'Silent Mode', icon: '🔕' },
               { id: 'camera', name: 'Camera Shortcut', icon: '📸' },

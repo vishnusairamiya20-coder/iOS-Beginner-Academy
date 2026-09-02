@@ -51,6 +51,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
   const mainApps: AppIconConfig[] = [
     {
+      id: 'chrome',
+      name: 'Chrome',
+      iconBg: 'bg-gradient-to-tr from-red-500 via-yellow-500 to-blue-500',
+      iconElement: <span className="text-xl font-black text-white">🌐</span>
+    },
+    {
       id: 'founder',
       name: 'Founder',
       badge: '★',

@@ -29,11 +29,13 @@ import { NotificationCenter } from './NotificationCenter';
 import { SpotlightSearch } from './SpotlightSearch';
 import { AppSwitcher } from './AppSwitcher';
 import { VolumeHUD } from './VolumeHUD';
+import { SiriOverlay } from './SiriOverlay';
 import { SettingsApp } from './apps/SettingsApp';
 import { MessagesApp } from './apps/MessagesApp';
 import { CameraApp } from './apps/CameraApp';
 import { PhoneApp } from './apps/PhoneApp';
 import { SafariApp } from './apps/SafariApp';
+import { ChromeApp } from './apps/ChromeApp';
 import { PhotosApp } from './apps/PhotosApp';
 import { AppStoreApp } from './apps/AppStoreApp';
 import { CalculatorApp } from './apps/CalculatorApp';
@@ -268,7 +270,9 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
 
   const handleActionButtonPress = () => {
     playVolumeStepSound(state.volume);
-    if (state.actionButtonMode === 'flashlight') {
+    if (state.actionButtonMode === 'siri') {
+      onUpdateState((s) => ({ ...s, isSiriOpen: true }));
+    } else if (state.actionButtonMode === 'flashlight') {
       onUpdateState((s) => ({ ...s, isFlashlightOn: !s.isFlashlightOn }));
     } else if (state.actionButtonMode === 'silent') {
       onUpdateState((s) => ({ ...s, isSilentMode: !s.isSilentMode }));
@@ -277,7 +281,7 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
     } else if (state.actionButtonMode === 'focus') {
       onUpdateState((s) => ({ ...s, isDoNotDisturb: !s.isDoNotDisturb }));
     } else {
-      onUpdateState((s) => ({ ...s, isFlashlightOn: !s.isFlashlightOn }));
+      onUpdateState((s) => ({ ...s, isSiriOpen: true }));
     }
   };
 
@@ -575,6 +579,10 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
                   <SafariApp state={state} />
                 )}
 
+                {state.currentApp === 'chrome' && (
+                  <ChromeApp state={state} />
+                )}
+
                 {state.currentApp === 'photos' && (
                   <PhotosApp
                     state={state}
@@ -666,6 +674,14 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
                 }
               />
             )}
+
+            <SiriOverlay
+              isOpen={state.isSiriOpen}
+              onClose={() => onUpdateState((s) => ({ ...s, isSiriOpen: false }))}
+              state={state}
+              onUpdateState={onUpdateState}
+              openApp={openApp}
+            />
           </div>
 
           {/* Bottom Home Indicator Bar (Swipe Up Zone) */}

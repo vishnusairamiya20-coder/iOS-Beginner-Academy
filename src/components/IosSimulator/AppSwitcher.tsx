@@ -22,6 +22,7 @@ export const AppSwitcher: React.FC<AppSwitcherProps> = ({
     camera: { name: 'Camera', icon: '📷' },
     photos: { name: 'Photos', icon: '🌸' },
     safari: { name: 'Safari', icon: '🧭' },
+    chrome: { name: 'Chrome', icon: '🌐' },
     appstore: { name: 'App Store', icon: '🅰️' },
     weather: { name: 'Weather', icon: '☀️' },
     calculator: { name: 'Calculator', icon: '🔢' },
