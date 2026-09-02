@@ -53,7 +53,7 @@ export const FounderApp: React.FC<FounderAppProps> = ({ state, onUpdateState }) 
 
   // Prompt Lab state
   const [selectedPromptId, setSelectedPromptId] = useState<string>(PROMPT_RECIPES[0].id);
-  const [customSubject, setCustomSubject] = useState<string>('Vishnu Sai Ramiya coding at sunset with an iPhone');
+  const [customSubject, setCustomSubject] = useState<string>('Rohan R. Potdar coding at sunset with an iPhone');
   const [copiedPrompt, setCopiedPrompt] = useState(false);
 
   // Math Lab State
@@ -114,7 +114,7 @@ export const FounderApp: React.FC<FounderAppProps> = ({ state, onUpdateState }) 
   }, [selectedPromptId]);
 
   const compiledPrompt = useMemo(() => {
-    const subject = customSubject.trim() || 'Vishnu Sai Ramiya coding at sunset';
+    const subject = customSubject.trim() || 'Rohan R. Potdar coding at sunset';
     return activePrompt.template.replace('[SUBJECT]', subject);
   }, [activePrompt, customSubject]);
 
@@ -140,7 +140,7 @@ export const FounderApp: React.FC<FounderAppProps> = ({ state, onUpdateState }) 
         setIsSpeaking(false);
       } else {
         const textToRead =
-          "Vishnu Sai Ramiya is a Class 9 student, software engineer, and artificial intelligence enthusiast. He builds high performance mobile operating system simulators, algorithmic math engines, and generative AI systems.";
+          "Rohan R. Potdar is an enthusiastic Class 9 student and technology innovator with a deep passion for artificial intelligence, science, and problem-solving.";
         const utterance = new SpeechSynthesisUtterance(textToRead);
         utterance.rate = 1.0;
         utterance.pitch = 1.05;
@@ -160,7 +160,7 @@ export const FounderApp: React.FC<FounderAppProps> = ({ state, onUpdateState }) 
       currentApp: 'phone',
       activeCall: {
         inCall: true,
-        contactName: 'Vishnu Sai Ramiya',
+        contactName: 'Rohan R. Potdar',
         contactNumber: '+91 98765 43210',
         duration: 0,
         isMuted: false,
@@ -218,13 +218,13 @@ export const FounderApp: React.FC<FounderAppProps> = ({ state, onUpdateState }) 
 
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <h1 className="font-extrabold text-sm truncate tracking-tight">Vishnu Sai Ramiya</h1>
+                <h1 className="font-extrabold text-sm truncate tracking-tight">Vishnu Sai Ramiya & Rohan R. Potdar</h1>
                 <span className="px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold text-[9px]">
                   Class 9
                 </span>
               </div>
               <p className="text-[10px] text-neutral-500 dark:text-neutral-400 truncate">
-                OS Architect, Programmer & AI Builder
+                Technology Innovators & AI Builders
               </p>
             </div>
           </div>
@@ -659,7 +659,7 @@ export const FounderApp: React.FC<FounderAppProps> = ({ state, onUpdateState }) 
         {activeTab === 'projects' && (
           <div className="space-y-4 animate-fade-in pb-8">
             <p className="text-[11px] text-neutral-500 dark:text-neutral-400">
-              Explore Vishnu's flagship software projects combining mathematics, systems engineering, and generative AI.
+              Explore Rohan's flagship software projects combining mathematics, systems engineering, and generative AI.
             </p>
 
             <div className="space-y-4">
@@ -743,10 +743,10 @@ export const FounderApp: React.FC<FounderAppProps> = ({ state, onUpdateState }) 
             <div className="p-3 rounded-2xl bg-gradient-to-tr from-purple-900/30 to-indigo-900/30 border border-purple-500/20 text-xs space-y-1">
               <div className="flex items-center gap-1.5 text-purple-400 font-bold">
                 <Sparkles className="w-4 h-4" />
-                <span>Vishnu's Mega-Prompt Generator</span>
+                <span>Rohan's Mega-Prompt Generator</span>
               </div>
               <p className="text-[11px] opacity-80">
-                Test and export Vishnu's high-fidelity prompt templates optimized for Google AI Studio and generative AI
+                Test and export Rohan's high-fidelity prompt templates optimized for Google AI Studio and generative AI
                 transformations.
               </p>
             </div>
@@ -840,7 +840,7 @@ export const FounderApp: React.FC<FounderAppProps> = ({ state, onUpdateState }) 
                 <span>Discrete Mathematics & Number Theory Engine</span>
               </div>
               <p className="text-[11px] opacity-80">
-                Interactive computational algorithms developed by Vishnu celebrating ancient and modern mathematical logic.
+                Interactive computational algorithms developed by Rohan celebrating ancient and modern mathematical logic.
               </p>
             </div>
 
@@ -1072,7 +1072,7 @@ export const FounderApp: React.FC<FounderAppProps> = ({ state, onUpdateState }) 
               <div className="divide-y divide-neutral-200 dark:divide-neutral-800 text-[11px]">
                 <div className="py-1.5 flex justify-between">
                   <span className="text-neutral-400">Founder Name</span>
-                  <span className="font-bold">Vishnu Sai Ramiya</span>
+                  <span className="font-bold">Rohan R. Potdar</span>
                 </div>
                 <div className="py-1.5 flex justify-between">
                   <span className="text-neutral-400">Academic Standing</span>
@@ -1080,11 +1080,11 @@ export const FounderApp: React.FC<FounderAppProps> = ({ state, onUpdateState }) 
                 </div>
                 <div className="py-1.5 flex justify-between">
                   <span className="text-neutral-400">Official Gmail / Sync</span>
-                  <span className="font-mono text-purple-400">vishnusairamiya20@gmail.com</span>
+                  <span className="font-mono text-purple-400">rohanpotdar@gmail.com</span>
                 </div>
                 <div className="py-1.5 flex justify-between">
                   <span className="text-neutral-400">Apple Account</span>
-                  <span className="font-mono text-emerald-400">vishnusairamiya20@gmail.com</span>
+                  <span className="font-mono text-emerald-400">rohanpotdar@gmail.com</span>
                 </div>
               </div>
             </div>

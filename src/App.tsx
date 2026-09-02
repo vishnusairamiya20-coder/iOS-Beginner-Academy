@@ -76,8 +76,8 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
   wallpaper: 'beach',
 
   appleId: {
-    name: 'Vishnu Sai Ramiya',
-    email: 'vishnusairamiya20@gmail.com',
+    name: 'Vishnu Sai Ramiya & Rohan R. Potdar',
+    email: 'vishnu.rohan.builders@gmail.com',
     phone: '+91 98765 43210',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
     icloudStorageUsedGB: 68.4,
@@ -87,7 +87,7 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
 
   gmailSync: {
     connected: true,
-    email: 'vishnusairamiya20@gmail.com',
+    email: 'vishnu.rohan.builders@gmail.com',
     lastSynced: 'Just now',
     isSyncing: false,
     backupPhotosCount: 25
@@ -100,7 +100,7 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
     { id: 'p-beach-sunset', emoji: '🌅', title: 'Golden Hour Sea Beach Sunset', url: '/beach_sunset.jpg', date: 'Today, 11:40 AM', isFavorite: true, isCameraRoll: true },
     { id: 'p-beach-tropical', emoji: '🏝️', title: 'Azure Ocean Coral Reef Shore', url: '/beach_tropical.jpg', date: 'Today, 10:50 AM', isFavorite: true, isCameraRoll: true },
     { id: 'p-ironman', emoji: '🦸‍♂️', title: 'Iron Man (Cinematic Armor)', url: '/ironman_photo.jpg', date: 'Today, 10:15 AM', isFavorite: true, isCameraRoll: true },
-    { id: 'p0', emoji: '🌅', title: 'Vishnu Sai Ramiya - Sunset Silhouette', date: 'Today, 9:32 AM', isFavorite: true, isCameraRoll: true },
+    { id: 'p0', emoji: '🌅', title: 'Rohan R. Potdar - Sunset Silhouette', date: 'Today, 9:32 AM', isFavorite: true, isCameraRoll: true },
     { id: 'p1', emoji: '🏔️', title: 'Yosemite Sunrise', date: 'Yesterday, 6:45 AM', isFavorite: true },
     { id: 'p2', emoji: '🐶', title: 'Golden Retriever Pup', date: 'Monday, 3:12 PM', isFavorite: true },
     { id: 'p3', emoji: '🍕', title: 'Artisan Woodfire Pizza', date: 'Aug 28, 7:30 PM', isFavorite: false },

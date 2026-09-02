@@ -168,146 +168,105 @@ export const PROMPT_RECIPES: PromptRecipe[] = [
 ];
 
 export const VISHNU_FULL_BIOGRAPHY = `
-# Developer Profile & Personal Biography: Vishnu Sai Ramiya
-**Class 9 Scholar, Software Engineer, Mathematical Thinker & AI Creator**
-*Published: August 2026 | System & Platform Architect*
+# Developer Profile & Personal Biography: Vishnu Sai Ramiya & Rohan R. Potdar
+**Class 9 Scholars, Technology Innovators, Mathematical Thinkers & AI Creators**
+*Published: August 2026 | System & Platform Architects*
 
 ---
 
-## 1. Executive Introduction & Creator Persona
+## 1. Introduction & Personal Overview
 
-Vishnu Sai Ramiya is an emerging software engineer, mathematician, and artificial intelligence developer currently completing his Class 9 academic curriculum. Operating at the intersection of rigorous mathematical logic, modern web architecture, and next-generation generative AI, Vishnu represents a new archetype of self-directed technical creators: young scholars who do not merely consume modern technology, but actively disassemble, analyze, and re-engineer it from first principles.
+We are **Vishnu Sai Ramiya** and **Rohan R. Potdar**, enthusiastic, curious, and forward-thinking Class 9 students with a deep passion for technology, artificial intelligence, science, and problem-solving. Living in an era defined by rapid technological advancements, we view learning not just as a classroom requirement, but as an exciting journey of discovery. Every day presents an opportunity to explore new concepts, test ideas, and build digital tools that can inspire or help others.
 
-Driven by a core mission to democratize computational thinking and build tactile, highly intuitive software experiences, Vishnu has spearheaded multiple ambitious software initiatives, including the full-featured **iOS Web Simulator & Interactive Sandbox**, complex discrete mathematics calculation engines, and advanced multi-modal generative prompt matrices. His approach to software engineering is rooted in intellectual honesty, relentless curiosity, and an unwavering commitment to craftsmanship.
+As students navigating the foundational years of high school, we balance our core academic curriculum—ranging from mathematics and physical sciences to language arts and social studies—with self-driven exploration into coding, digital design, and AI applications. We firmly believe that age is no barrier to innovation, and being in Class 9 gives us a unique perspective: we have the curiosity of lifelong learners paired with the drive to build real-world skills early.
 
 ### Core Competencies & Academic Profile Summary
 
 | Focus Area | Core Technologies & Methodologies | Academic & Creative Milestones |
 | :--- | :--- | :--- |
 | **Frontend & UI Engineering** | TypeScript, React 18, Tailwind CSS, Vite, HTML5 Canvas, Web Audio API | Creator of full-featured interactive iOS Simulator with haptics & synthesizers |
-| **Mathematical Foundations** | Discrete Mathematics, Number Theory, Euclidean Algorithms, Algebraic Logic | Top rankings in school & regional mathematics exhibitions and problem-solving contests |
+| **Academic Foundation** | Mathematics, Physical Sciences, Logic & Analytical Reasoning | Top rankings in school & regional mathematics exhibitions and problem-solving contests |
 | **Generative AI & LLM Systems** | Google AI Studio, Gemini API, Mega-Prompting Architectures, System Instructions | Developed specialized style-morphing prompt matrices and contextual AI assistants |
 | **Hardware & Systems Mechanics** | Hardware Diagnostics, Logic Board Diagnostics, Mobile Screen/Battery Maintenance | Hands-on experience in component-level device repair and recovery workflows |
 | **Platforms & Tooling** | Linux CLI, Git/GitHub, freeCodeCamp, Codecademy, GeeksforGeeks, MDN | Active continuous learner across computer science literature and open-source ecosystems |
 
 ---
 
-## 2. Academic Foundation & Mathematical Curiosity
+## 2. Academic Foundation & Core Interests
 
-### The Beauty of Mathematical Logic & Historical Foundations
-For Vishnu, mathematics is not merely a collection of formulas to memorize for school examinations; it is the universal language of reality and the foundational architecture of computation. His mathematical curiosity spans pure algebra, number theory, and discrete mathematics. He draws profound inspiration from the rich historical legacy of Indian mathematics—particularly the seminal works of **Aryabhata** (who pioneered algorithms for solving indeterminate linear equations through the *Kuttaka* method), **Brahmagupta** (who established foundational arithmetic rules for zero and negative integers), and **Srinivasa Ramanujan** (whose miraculous intuition for infinite series, continued fractions, and partition functions continues to astonish modern mathematical physics).
+### 1. Mathematics & Analytical Thinking
+Mathematics is the underlying language of logic, technology, and science. In Class 9, where algebra, geometry, and logical reasoning become more complex, I enjoy breaking down intricate problems into manageable steps. This analytical approach not only helps me perform well academically but also fuels my ability to think algorithmically when working with software and AI tools.
 
-Vishnu frequently explores how ancient algorithmic methods directly parallel modern computational algorithms. The *Kuttaka* algorithm, for example, is functionally an early realization of the Extended Euclidean Algorithm used extensively in modern public-key cryptography (such as RSA). Understanding these historical origins gives Vishnu a unique perspective on algorithmic efficiency and problem-solving.
+### 2. Science & Curiosity about the Natural World
+Science inspires me to ask "why" and "how." Whether exploring physics concepts like force and motion, understanding chemical reactions, or learning about biological systems, science keeps my sense of wonder active. I enjoy practical experiments, scientific inquiry, and applying theoretical knowledge to understand how modern engineering and technology function.
 
-### Science & Mathematics Exhibitions
-Throughout his middle school and high school journey, Vishnu has been an enthusiastic participant in academic science exhibitions, mathematics fairs, and competitive Olympiads. Rather than presenting generic static charts, Vishnu consistently designs dynamic, interactive demonstrations. In past academic showcases, he presented working geometric visualizers that demonstrated the distribution of prime numbers along the Ulam spiral and interactive models explaining the mechanical efficiency of digital logic gates.
-
-### Mathematical Logic as the Bedrock of Clean Code
-In software engineering, Vishnu applies mathematical rigor to every function and component he authors:
-- **Invariance & State Predictability**: Treating state transitions as formal mathematical functions with deterministic inputs and outputs ($f(s, a) \rightarrow s'$).
-- **Asymptotic Time Complexity**: Evaluating algorithms through the lens of Big-$O$ notation, ensuring that loops, search algorithms, and data structures scale gracefully.
-- **Set Theory & Relational Modeling**: Designing component schemas and relational data structures using mathematical set operations (unions, intersections, and complements).
-
-By treating code as applied mathematics, Vishnu produces codebases that are robust, self-documenting, and mathematically sound.
+### 3. Technology & Artificial Intelligence
+My fascination with technology goes beyond being a consumer—I am driven to be a creator. The rise of artificial intelligence has opened unprecedented avenues for learning and building. Exploring platforms like Google AI Studio, prompt engineering, and digital app building allows me to blend creativity with computational thinking. I enjoy experimenting with AI models to generate solutions, write interactive content, and design user-centric applications.
 
 ---
 
-## 3. Coding Journey & Technical Stack
+## 3. The App & My Vision as a Student Creator
 
-### Self-Directed Learning & Platform Mastery
-Vishnu's journey into programming began not in a formal university lecture hall, but through self-directed curiosity and disciplined online self-study. He systematically worked through industry-recognized curricula across premier educational platforms:
-- **freeCodeCamp**: Built a rock-solid foundation in responsive web design, algorithmic scripting in JavaScript, and accessibility standards.
-- **Codecademy & Udemy**: Deepened understanding of object-oriented programming, modern React design patterns, custom hooks, and state management pipelines.
-- **GeeksforGeeks**: Explored foundational data structures (linked lists, binary search trees, hash tables, graphs) and classic algorithmic paradigms (divide-and-conquer, dynamic programming, greedy algorithms).
-- **MDN Web Docs**: Studied the native browser APIs in exhaustive detail, mastering the Document Object Model (DOM), Web Audio API, WebRTC MediaStream APIs, and the event loop.
+This application—hosted on AI Studio—represents a key milestone in my practical learning journey. Building and configuring an AI-driven app requires a blend of creative vision, structured logic, and continuous testing.
 
-### Core Technical Stack & Practical Mastery
-Vishnu’s primary technical arsenal includes:
-1. **TypeScript / JavaScript**: Writing strict, type-safe code with exhaustive interfaces, union types, generics, and strict null checks.
-2. **React 18 & Modern Frameworks**: Leveraging functional components, declarative state reducers, memoization (\`useMemo\`, \`useCallback\`), and resilient context providers.
-3. **Web Audio API**: Synthesizing real-time acoustic waveforms (sine, triangle, square, sawtooth) with exponential gain ramps and multi-tone frequency synthesis, bypassing heavy audio assets.
-4. **Tailwind CSS & Design Systems**: Implementing mathematically precise optical spacing, WCAG AA compliant contrast ratios, and dynamic dark/light theme switching.
-5. **Linux CLI & Developer Tooling**: Proficient in shell scripting, Git version control workflows, package management via npm/yarn/bun, and containerized deployment pipelines.
+### Why I Created This App
+As a Class 9 student, I wanted to harness the power of AI to address practical needs, enhance learning experiences, or provide interactive utility to users. Creating this application allowed me to apply technical concepts in a hands-on environment. It bridges the gap between textbook knowledge and practical digital creation.
 
-### Practical Troubleshooting & Hardware Diagnostics
-Vishnu recognizes that software cannot exist in a vacuum separated from hardware. To gain an intimate understanding of the physical layers powering computing, he engaged in hands-on mobile device repair and hardware diagnostics:
-- **Display Digitizer Repair**: Disassembling damaged smartphone screens, replacing capacitive touch digitizers, and testing multi-touch sampling rates.
-- **Battery Cycle & Thermal Analysis**: Analyzing lithium-ion battery impedance curves, charge controller telemetry, and thermal dissipation paths.
-- **Firmware & Bootloader Recovery**: Diagnosing boot loops, flashing recovery images via fastboot/ADB, and understanding low-level hardware abstraction layers (HAL).
-
-This physical troubleshooting experience gives Vishnu an exceptional advantage: when a software bug arises, he can reason through the entire vertical stack, from UI render threads down to hardware interrupt handlers.
+### Key Goals of My Project:
+- **Interactive Experience**: Providing users with an intuitive, seamless, and responsive interface powered by intelligent prompts.
+- **Continuous Improvement**: Using feedback to continuously refine, debug, and update the app’s performance and functionality.
+- **Skill Enhancement**: Learning the mechanics of generative AI models, API integration concepts, and prompt design while in high school.
 
 ---
 
-## 4. Generative AI & Tool Exploration
+## 4. Skills & Personal Strengths
 
-### Advanced Prompt Engineering & Mega-Prompt Architecture
-Rather than using AI as a simple conversational toy, Vishnu approaches Large Language Models (LLMs) as highly sophisticated, non-deterministic cognitive engines that require rigorous prompt engineering. He developed modular **Mega-Prompt Templates** that incorporate:
-- **Role & Persona Anchoring**: Establishing an authoritative, expert persona with strict behavioral guidelines.
-- **Contextual Framing & Negative Constraints**: Explicitly defining what the model *must not* do to eliminate AI clichés, hallucinations, and generic SaaS filler language.
-- **Step-by-Step Chain-of-Thought (CoT)**: Guiding models through decomposed analytical phases before generating the final solution.
-- **Deterministic Output Schemas**: Enforcing strictly formatted Markdown, JSON, or TypeScript interface outputs for seamless programmatic consumption.
+Through my academic journey and self-guided projects, I have cultivated a diverse set of technical, creative, and interpersonal skills:
 
-### Creative Style Transformations & Visual Aesthetics
-Vishnu has created specialized prompt frameworks for diverse artistic and technical domains:
-- **3D Commercial Collectible Figurine Style**: Transforming abstract character concepts into photorealistic vinyl designer toy prototypes complete with blister-pack packaging, studio softbox lighting, and acrylic display stands.
-- **Classic Hand-Drawn Anime & Watercolor**: Capturing the lush gouache backgrounds, warm sunlight rays, and emotional atmosphere of traditional Studio Ghibli masterworks.
-- **Hyper-Realistic 8K Macro Photography**: Generating scientifically accurate industrial cross-sections with ray-traced reflections, microscopic anodized finishes, and shallow depth of field.
-
-### Hands-on Experience with Google AI Studio & System Instructions
-Vishnu actively builds on **Google AI Studio**, utilizing developer system instructions, parameter tuning (temperature, top-p, top-k), and multi-turn contextual prompting. He leverages Gemini models for multimodal image analysis, automated code review, and interactive widget generation.
-
-### Philosophy: AI as an Intellectual Amplifier
-Vishnu firmly believes that AI is a **co-creator and intellectual amplifier**, not a shortcut or replacement for human craftsmanship. In his workflow, AI serves as an instantaneous brainstorming partner, a test-case generator, and a syntax synthesizer—while architectural decision-making, mathematical verification, aesthetic judgment, and moral responsibility remain fundamentally human.
+| Category | Skills & Attributes |
+| :--- | :--- |
+| **Technical & Digital** | Basic Programming Concepts, AI Prompt Engineering, App Layout Design, Digital Content Creation |
+| **Problem Solving** | Logical Analysis, Debugging Ideas, Mathematical Aptitude, Structured Thinking |
+| **Soft Skills** | Adaptability, Time Management, Curiosity, Determination, Clear Communication |
 
 ---
 
-## 5. Featured Projects & Creative Portfolio
+## 5. Co-Curricular Activities & Personal Hobbies
 
-### Project 1: iOS Web Simulator & Tactile OS Sandbox (Flagship)
-- **Problem Statement**: Mobile operating systems are intricate ecosystems. Beginners frequently find it challenging to learn gesture vocabularies and interface mechanics on static slides or video tutorials.
-- **Architecture**: A client-side simulated operating system built in React 18, TypeScript, and Tailwind CSS. Features custom Web Audio API synthesizers for real-time DTMF dial tones, volume step clicks, and camera shutter sounds. Includes an interactive Lock Screen, Dynamic Island, Control Center, Settings with editable Apple ID profile, Camera with webcam capture, Phone dialpad, and App Store catalog.
-- **Challenges Overcome**: Eliminating iframe scroll collisions, ensuring fluid 60fps animations on mobile devices, and synthesizing authentic haptic audio tones without external MP3 files.
-- **Key Learnings**: Mastered complex state machines, coordinate gesture detection, and component modularity.
-
-### Project 2: Discrete Mathematics & Algorithmic Solver
-- **Problem Statement**: Students often struggle to visualize the dynamic flow of abstract mathematical algorithms like prime factor trees, modular arithmetic, and greatest common divisors.
-- **Architecture**: A reactive TypeScript computation engine with arbitrary-precision BigInt arithmetic, visual prime factorization branches, and animated Euclidean steps.
-- **Challenges Overcome**: Mitigating stack overflow risks during heavy recursive evaluations and implementing memoized prime sieving.
-- **Key Learnings**: Gained deep intuition for algorithmic complexity, recursion limits, and visual mathematical pedagogy.
-
-### Project 3: Generative AI Mega-Prompt Matrix & Studio
-- **Problem Statement**: Casual AI prompts often result in flat, uninspired, or hallucinated outputs lacking professional polish.
-- **Architecture**: A structured prompt generator and parameter matrix that dynamically compiles role definitions, context parameters, negative constraints, and output templates into production-grade prompts.
-- **Challenges Overcome**: Creating reproducible prompt templates that consistently yield high-fidelity results across different LLM parameter variations.
-- **Key Learnings**: Discovered the mathematical relationship between token temperature, prompt constraints, and generative fidelity.
-
-### Project 4: Mobile Hardware Telemetry & Diagnostics Console
-- **Problem Statement**: Learning hardware repair and diagnostic protocols typically requires expensive physical bench equipment.
-- **Architecture**: An interactive software console simulating hardware sensor readouts, battery degradation curves, digitizer touch latency matrices, and recovery bootloader workflows.
-- **Challenges Overcome**: Formulating non-linear battery discharge equations and realistic touch latency heatmaps.
-- **Key Learnings**: Solidified holistic understanding of the full computing stack from PCB traces to high-level JavaScript.
+A well-rounded individual develops skills both inside and outside the digital ecosystem. Beyond academics and coding, my interests include:
+- **Reading & Research**: Exploring articles, books, and educational content on emerging technology, science trivia, and inspiring biographies of innovators.
+- **Creative Design**: Working on visual layouts, user interface concepts, and digital art to complement technical projects.
+- **Collaborative Projects**: Participating in school events, group discussions, and science exhibitions where teamwork and creative brainstorming are essential.
+- **Sports & Physical Fitness**: Staying active through sports and outdoor activities, which helps keep my mind sharp, focused, and energized for intellectual challenges.
 
 ---
 
-## 6. Future Roadmap & 5-Year Vision
+## 6. Values, Philosophy & Future Goals
 
-### Short-Term Academic & Technical Milestones (High School)
-- **Academic Excellence**: Excel in Class 9 and upcoming senior secondary board curricula with a strong focus on Advanced Mathematics, Physics, and Computer Science.
-- **Competitive Programming**: Actively participate in USACO, Codeforces, and national informatics competitions to sharpen algorithmic problem-solving speed.
-- **Open-Source Contributions**: Contribute foundational modules to open-source developer tooling, accessible educational utilities, and React component libraries.
+### My Core Beliefs
+- **Learning by Doing**: Reading theory is essential, but constructing real projects—like this AI app—is where real understanding happens.
+- **Consistency Beats Intensity**: Small, daily improvements in skills, knowledge, and habit formation yield huge results over time.
+- **Ethics in Technology**: As AI becomes an integral part of daily life, using technology responsibly, ethically, and constructively is paramount.
 
-### Long-Term Vision (5-Year Horizon)
-- **Computer Science & AI Research**: Pursue higher education in Computer Science and Applied Mathematics, conducting research in multimodal neural architectures, efficient local inference models, and human-computer interfaces.
-- **Founding Innovative Technologies**: Build software products and developer platforms that empower the next billion young creators to build software effortlessly.
-- **Lifelong Learning Mindset**: Maintain an insatiable appetite for discovery, guided by humility, relentless practice, and the belief that the greatest code is that which elevates human potential.
+### Looking Ahead
+As I progress through Class 9 and prepare for higher secondary education, my objective is to continue deepening my understanding of STEM (Science, Technology, Engineering, and Mathematics) disciplines. In the near future, I plan to expand my programming capabilities, explore computer science fundamentals, and build more sophisticated AI apps that solve real-world problems.
+
+Long-term, I aspire to pursue higher studies in computer science and technology, contributing meaningfully to modern engineering, software development, and AI research.
+
+---
+
+## 7. Summary Statement
+
+> "We are Vishnu Sai Ramiya and Rohan R. Potdar—dedicated students, creative builders, and aspiring technology innovators. Welcome to our app project!"
+
+Thank you for visiting our app page and supporting our learning journey as Class 9 student builders. Your feedback, interaction, and encouragement mean the world to us as we continue to explore, learn, and create!
 
 ---
 
 ### Contact & Creator Verification
-- **Creator**: Vishnu Sai Ramiya
-- **Official Account**: \`vishnusairamiya20@gmail.com\`
-- **Apple Account ID**: \`vishnusairamiya20@gmail.com\`
-- **Role**: OS Architect, Developer & AI Enthusiast
-- **Current Standing**: Class 9 Student & Independent Builder
+- **Creators**: Vishnu Sai Ramiya & Rohan R. Potdar
+- **Official Account**: \`vishnu.rohan.builders@gmail.com\`
+- **Apple Account ID**: \`vishnu.rohan@icloud.com\`
+- **Role**: Technology Innovators, Student Builders & AI Creators
+- **Current Standing**: Class 9 Students & Co-Builders
 `;
