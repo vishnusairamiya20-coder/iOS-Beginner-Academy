@@ -47,7 +47,6 @@ import { MusicApp } from './apps/MusicApp';
 import { YouTubeApp } from './apps/YouTubeApp';
 import { PinterestApp } from './apps/PinterestApp';
 import { WallpaperBackground } from './WallpaperBackground';
-import { PasscodeKeypad } from './PasscodeKeypad';
 import { PowerMenuOverlay } from './PowerMenuOverlay';
 import { BootScreen } from './BootScreen';
 import { CameraControlOverlay } from './CameraControlOverlay';
@@ -77,7 +76,6 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
   const liveClock = useLiveClock();
   const [swipeStartY, setSwipeStartY] = useState<number | null>(null);
   const [screenshotFlash, setScreenshotFlash] = useState(false);
-  const [showPasscodeUnlock, setShowPasscodeUnlock] = useState(false);
   const [isVolumeHudVisible, setIsVolumeHudVisible] = useState(false);
   const volumeHudTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const previousVolumeRef = useRef<number>(state.volume || 70);
@@ -178,13 +176,8 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
   }, [handleVolumeUp, handleVolumeDown, handleToggleMute]);
 
   const handleLockScreenTap = () => {
-    if (showPasscodeUnlock) return;
-    if (state.faceId?.isPasscodeEnabled) {
-      setShowPasscodeUnlock(true);
-    } else {
-      playUnlockSound();
-      onUpdateState((s) => ({ ...s, isLocked: false }));
-    }
+    playUnlockSound();
+    onUpdateState((s) => ({ ...s, isLocked: false }));
   };
 
   const openApp = (appId: IosAppId) => {
@@ -227,12 +220,8 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
 
   const handleHomeBarClick = () => {
     if (state.isLocked) {
-      if (state.faceId?.isPasscodeEnabled) {
-        setShowPasscodeUnlock(true);
-      } else {
-        playUnlockSound();
-        onUpdateState((s) => ({ ...s, isLocked: false }));
-      }
+      playUnlockSound();
+      onUpdateState((s) => ({ ...s, isLocked: false }));
     } else {
       goHome();
     }
@@ -251,12 +240,8 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
     // Upward swipe on home bar
     if (diffY < -30) {
       if (state.isLocked) {
-        if (state.faceId?.isPasscodeEnabled) {
-          setShowPasscodeUnlock(true);
-        } else {
-          playUnlockSound();
-          onUpdateState((s) => ({ ...s, isLocked: false }));
-        }
+        playUnlockSound();
+        onUpdateState((s) => ({ ...s, isLocked: false }));
       } else {
         if (diffY < -100) {
           openAppSwitcher();
@@ -533,18 +518,13 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
 
   const handlePowerButton = useCallback(() => {
     if (state.isLocked) {
-      if (state.faceId?.isPasscodeEnabled) {
-        setShowPasscodeUnlock(true);
-      } else {
-        playUnlockSound();
-        onUpdateState((s) => ({ ...s, isLocked: false }));
-      }
+      playUnlockSound();
+      onUpdateState((s) => ({ ...s, isLocked: false }));
     } else {
       playLockSound();
-      setShowPasscodeUnlock(false);
       onUpdateState((s) => ({ ...s, isLocked: true }));
     }
-  }, [state.isLocked, state.faceId?.isPasscodeEnabled, onUpdateState]);
+  }, [state.isLocked, onUpdateState]);
 
   const handleTurnOn = useCallback(() => {
     setIsBooting(true);
@@ -897,27 +877,13 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
           {/* Active Screen Content */}
           <div className="flex-1 relative overflow-hidden">
             {state.isLocked ? (
-              /* REALISTIC IOS LOCK SCREEN WITH FACE ID & PASSCODE */
+              /* REALISTIC IOS LOCK SCREEN */
               <div
                 onClick={handleLockScreenTap}
                 className="h-full flex flex-col justify-between pt-14 pb-8 px-6 select-none text-white cursor-pointer relative overflow-hidden"
               >
                 {/* Lockscreen Wallpaper */}
                 <WallpaperBackground wallpaper={state.wallpaper} isDarkMode={state.isDarkMode} isLockScreen />
-
-                {/* Passcode Keypad Overlay if requested */}
-                {showPasscodeUnlock && (
-                  <PasscodeKeypad
-                    correctPasscode={state.faceId.passcode || '123456'}
-                    title="Enter Passcode"
-                    subtitle="Unlock your iPhone"
-                    onSuccess={() => {
-                      setShowPasscodeUnlock(false);
-                      onUpdateState((s) => ({ ...s, isLocked: false }));
-                    }}
-                    onCancel={() => setShowPasscodeUnlock(false)}
-                  />
-                )}
 
                 {/* Top Lock Icon */}
                 <div className="flex flex-col items-center space-y-1 relative z-10">
@@ -957,19 +923,8 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
 
                   <div className="flex flex-col items-center">
                     <span className="text-[11px] font-medium opacity-80 animate-pulse">
-                      {state.faceId?.isPasscodeEnabled ? 'Swipe up to unlock' : 'Swipe up to open'}
+                      Swipe up to open
                     </span>
-                    {state.faceId?.isPasscodeEnabled && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowPasscodeUnlock(true);
-                        }}
-                        className="text-[9px] text-white/60 hover:text-white underline mt-0.5 cursor-pointer"
-                      >
-                        Enter Passcode
-                      </button>
-                    )}
                   </div>
 
                   <button

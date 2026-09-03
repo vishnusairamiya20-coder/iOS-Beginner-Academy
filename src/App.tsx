@@ -50,7 +50,7 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
     requireAttention: false,
     attentionAwareFeatures: false,
     passcode: '123456',
-    isPasscodeEnabled: true,
+    isPasscodeEnabled: false,
     alternativeAppearance: false,
     maskUnlockEnabled: false,
     hapticOnSuccess: false

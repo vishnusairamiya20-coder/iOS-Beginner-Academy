@@ -38,7 +38,6 @@ import { SimulatorState } from '../../../types';
 import { playDtmfTone, playVolumeStepSound, playUnlockSound, playLockSound } from '../../../utils/audioUtils';
 import { WallpaperBackground } from '../WallpaperBackground';
 import { useLiveClock } from '../../../utils/dateTime';
-import { PasscodeKeypad } from '../PasscodeKeypad';
 
 interface SettingsAppProps {
   state: SimulatorState;
@@ -54,11 +53,6 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
   const [fakeEmail, setFakeEmail] = useState(state.appleId.email);
   const [fakePhone, setFakePhone] = useState(state.appleId.phone);
 
-  // Passcode settings modal states
-  const [showPasscodeModal, setShowPasscodeModal] = useState(false);
-  const [isVerifyingPasscodeForPasscode, setIsVerifyingPasscodeForPasscode] = useState(false);
-  const [isChangingPasscode, setIsChangingPasscode] = useState(false);
-
   // Subpage toggles
   const toggleWifi = () => onUpdateState((s) => ({ ...s, isWifiOn: !s.isWifiOn }));
   const toggleBluetooth = () => onUpdateState((s) => ({ ...s, isBluetoothOn: !s.isBluetoothOn }));
@@ -67,26 +61,6 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
   const toggleDarkMode = () => onUpdateState((s) => ({ ...s, isDarkMode: !s.isDarkMode }));
   const toggleLowPower = () => onUpdateState((s) => ({ ...s, isLowPowerMode: !s.isLowPowerMode }));
   const toggleDoNotDisturb = () => onUpdateState((s) => ({ ...s, isDoNotDisturb: !s.isDoNotDisturb }));
-
-  // Settings Toggles
-  const updateFaceId = (key: keyof typeof state.faceId, value: any) => {
-    playVolumeStepSound();
-    onUpdateState((s) => ({
-      ...s,
-      faceId: {
-        ...s.faceId,
-        [key]: value
-      }
-    }));
-  };
-
-  const handleOpenPasscodeSettings = () => {
-    if (state.faceId.isPasscodeEnabled) {
-      setIsVerifyingPasscodeForPasscode(true);
-    } else {
-      setActiveSubpage('passcode');
-    }
-  };
 
   const handleSaveAppleId = () => {
     onUpdateState((s) => ({
@@ -739,100 +713,6 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
     );
   }
 
-  // 9. PASSCODE SUBPAGE
-  if (activeSubpage === 'passcode') {
-    return (
-      <div className={`h-full flex flex-col ${state.isDarkMode ? 'bg-black text-white' : 'bg-[#F2F2F7] text-black'} select-none text-xs font-sans`}>
-        {isChangingPasscode && (
-          <PasscodeKeypad
-            isSettingNew
-            title="Change Passcode"
-            onSuccess={() => {
-              setIsChangingPasscode(false);
-              playUnlockSound();
-            }}
-            onCancel={() => setIsChangingPasscode(false)}
-            onSaveNewPasscode={(newPin) => {
-              updateFaceId('passcode', newPin);
-              updateFaceId('isPasscodeEnabled', true);
-            }}
-          />
-        )}
-
-        {/* Subpage Header */}
-        <div className={`pt-12 pb-2 px-3 flex items-center gap-2 border-b ${state.isDarkMode ? 'border-neutral-800 bg-neutral-900/80' : 'border-neutral-200 bg-white/80'} backdrop-blur`}>
-          <button onClick={() => setActiveSubpage(null)} className="flex items-center text-blue-500 font-medium cursor-pointer">
-            <ArrowLeft className="w-4 h-4 mr-0.5" />
-            <span>Settings</span>
-          </button>
-          <span className="font-semibold text-sm mx-auto pr-6">Passcode</span>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {/* PASSCODE CONTROLS */}
-          <div className="space-y-1">
-            <span className="text-[10px] uppercase font-bold text-neutral-400 px-1 tracking-wider">
-              Passcode Settings
-            </span>
-            <div className={`rounded-2xl divide-y divide-neutral-200 dark:divide-neutral-800 shadow-xs ${state.isDarkMode ? 'bg-neutral-900' : 'bg-white'}`}>
-              <div
-                onClick={() => updateFaceId('isPasscodeEnabled', !state.faceId.isPasscodeEnabled)}
-                className="p-3 flex items-center justify-between cursor-pointer hover:opacity-80"
-              >
-                <span className="font-semibold text-xs text-blue-500">
-                  {state.faceId.isPasscodeEnabled ? 'Turn Passcode Off' : 'Turn Passcode On'}
-                </span>
-                <span className="text-[10px] text-neutral-400">
-                  {state.faceId.isPasscodeEnabled ? '6-Digit PIN' : 'Disabled'}
-                </span>
-              </div>
-
-              {state.faceId.isPasscodeEnabled && (
-                <div
-                  onClick={() => setIsChangingPasscode(true)}
-                  className="p-3 flex items-center justify-between cursor-pointer hover:opacity-80"
-                >
-                  <span className="font-semibold text-xs text-blue-500">Change Passcode</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-neutral-400" />
-                </div>
-              )}
-
-              <div className="p-3 flex items-center justify-between">
-                <span className="font-medium text-neutral-500 text-xs">Require Passcode</span>
-                <span className="font-bold text-xs">Immediately</span>
-              </div>
-            </div>
-          </div>
-
-          {/* ALLOW ACCESS WHEN LOCKED */}
-          <div className="space-y-1">
-            <span className="text-[10px] uppercase font-bold text-neutral-400 px-1 tracking-wider">
-              Allow Access When Locked:
-            </span>
-            <div className={`rounded-2xl divide-y divide-neutral-200 dark:divide-neutral-800 shadow-xs ${state.isDarkMode ? 'bg-neutral-900' : 'bg-white'}`}>
-              {[
-                'Lock Screen Widgets',
-                'Notification Center',
-                'Control Center',
-                'Siri & Voice Assistant',
-                'Reply with Message',
-                'Wallet & Passes',
-                'Return Missed Calls'
-              ].map((item) => (
-                <div key={item} className="p-3 flex items-center justify-between">
-                  <span className="font-semibold text-xs">{item}</span>
-                  <div className="w-11 h-6 rounded-full bg-green-500 relative flex items-center p-0.5">
-                    <div className="w-5 h-5 rounded-full bg-white shadow-md transform translate-x-5" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // MAIN SETTINGS ROOT VIEW
   return (
     <div className={`h-full flex flex-col ${state.isDarkMode ? 'bg-black text-white' : 'bg-[#F2F2F7] text-black'} select-none font-sans relative text-xs`}>
@@ -893,20 +773,6 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
       <div className="pt-14 pb-2 px-4 border-b border-neutral-200 dark:border-neutral-800">
         <h1 className="text-2xl font-bold">Settings</h1>
       </div>
-
-      {/* Verify Passcode Modal before opening Passcode settings */}
-      {isVerifyingPasscodeForPasscode && (
-        <PasscodeKeypad
-          correctPasscode={state.faceId.passcode || '123456'}
-          title="Enter Passcode"
-          subtitle="Enter your passcode to view Passcode settings"
-          onSuccess={() => {
-            setIsVerifyingPasscodeForPasscode(false);
-            setActiveSubpage('passcode');
-          }}
-          onCancel={() => setIsVerifyingPasscodeForPasscode(false)}
-        />
-      )}
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {/* Apple ID Profile Card */}
@@ -1072,29 +938,6 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
             </div>
             <div className="flex items-center gap-1 text-neutral-400 text-[11px]">
               <span>{state.batteryLevel}%</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </div>
-          </div>
-        </div>
-
-        {/* Security Stack */}
-        <div className={`rounded-2xl divide-y divide-neutral-200 dark:divide-neutral-800 shadow-xs ${state.isDarkMode ? 'bg-neutral-900' : 'bg-white'}`}>
-          <div
-            onClick={handleOpenPasscodeSettings}
-            className="p-3 flex items-center justify-between cursor-pointer hover:opacity-75"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-xs">
-                <Lock className="w-4 h-4" />
-              </div>
-              <div>
-                <span className="font-semibold text-xs">Passcode</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-1 text-neutral-400 text-[11px]">
-              <span className={state.faceId.isPasscodeEnabled ? 'text-indigo-500 font-bold' : 'text-neutral-400'}>
-                {state.faceId.isPasscodeEnabled ? 'On' : 'Off'}
-              </span>
               <ChevronRight className="w-3.5 h-3.5" />
             </div>
           </div>
