@@ -11,7 +11,6 @@ import {
   ChevronDown,
   Sparkles,
   RotateCcw,
-  Scan,
   Lock,
   Unlock,
   Key,
@@ -57,8 +56,6 @@ import {
   playUnlockSound,
   playVolumeStepSound,
   playCameraShutterSound,
-  playFaceIdSuccessSound,
-  playBiometricTickSound,
   playPowerDownSound,
   playCameraControlClick,
   playCameraControlLightPress,
@@ -80,10 +77,7 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
   const liveClock = useLiveClock();
   const [swipeStartY, setSwipeStartY] = useState<number | null>(null);
   const [screenshotFlash, setScreenshotFlash] = useState(false);
-  const [isFaceIdScanning, setIsFaceIdScanning] = useState(false);
-  const [isFaceIdUnlocked, setIsFaceIdUnlocked] = useState(false);
   const [showPasscodeUnlock, setShowPasscodeUnlock] = useState(false);
-  const [lockCameraActive, setLockCameraActive] = useState(false);
   const [isVolumeHudVisible, setIsVolumeHudVisible] = useState(false);
   const volumeHudTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const previousVolumeRef = useRef<number>(state.volume || 70);
@@ -183,53 +177,9 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
     };
   }, [handleVolumeUp, handleVolumeDown, handleToggleMute]);
 
-  const lockVideoRef = useRef<HTMLVideoElement | null>(null);
-  const lockStreamRef = useRef<MediaStream | null>(null);
-
-  const handleLockScreenTap = async () => {
-    if (state.faceId.isEnrolled && state.faceId.useForIphoneUnlock) {
-      setIsFaceIdScanning(true);
-      playBiometricTickSound();
-
-      // Quick webcam glance
-      try {
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'user', width: { ideal: 240 }, height: { ideal: 240 } },
-            audio: false
-          });
-          lockStreamRef.current = stream;
-          if (lockVideoRef.current) {
-            lockVideoRef.current.srcObject = stream;
-            lockVideoRef.current.play().catch(() => {});
-          }
-          setLockCameraActive(true);
-        }
-      } catch (e) {
-        // Fallback without camera stream
-        setLockCameraActive(false);
-      }
-
-      setTimeout(() => {
-        setIsFaceIdScanning(false);
-        setIsFaceIdUnlocked(true);
-        if (state.faceId.hapticOnSuccess) {
-          playFaceIdSuccessSound();
-        } else {
-          playUnlockSound();
-        }
-
-        setTimeout(() => {
-          if (lockStreamRef.current) {
-            lockStreamRef.current.getTracks().forEach((t) => t.stop());
-            lockStreamRef.current = null;
-          }
-          setLockCameraActive(false);
-          setIsFaceIdUnlocked(false);
-          onUpdateState((s) => ({ ...s, isLocked: false }));
-        }, 450);
-      }, 700);
-    } else if (state.faceId.isPasscodeEnabled) {
+  const handleLockScreenTap = () => {
+    if (showPasscodeUnlock) return;
+    if (state.faceId?.isPasscodeEnabled) {
       setShowPasscodeUnlock(true);
     } else {
       playUnlockSound();
@@ -275,6 +225,19 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
     onTriggerGesture?.('swipe_up_pause_app_switcher');
   };
 
+  const handleHomeBarClick = () => {
+    if (state.isLocked) {
+      if (state.faceId?.isPasscodeEnabled) {
+        setShowPasscodeUnlock(true);
+      } else {
+        playUnlockSound();
+        onUpdateState((s) => ({ ...s, isLocked: false }));
+      }
+    } else {
+      goHome();
+    }
+  };
+
   const handleTouchStart = (e: React.TouchEvent | React.MouseEvent) => {
     const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
     setSwipeStartY(clientY);
@@ -287,10 +250,19 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
 
     // Upward swipe on home bar
     if (diffY < -30) {
-      if (diffY < -100) {
-        openAppSwitcher();
+      if (state.isLocked) {
+        if (state.faceId?.isPasscodeEnabled) {
+          setShowPasscodeUnlock(true);
+        } else {
+          playUnlockSound();
+          onUpdateState((s) => ({ ...s, isLocked: false }));
+        }
       } else {
-        goHome();
+        if (diffY < -100) {
+          openAppSwitcher();
+        } else {
+          goHome();
+        }
       }
     }
     setSwipeStartY(null);
@@ -561,13 +533,18 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
 
   const handlePowerButton = useCallback(() => {
     if (state.isLocked) {
-      playUnlockSound();
-      onUpdateState((s) => ({ ...s, isLocked: false }));
+      if (state.faceId?.isPasscodeEnabled) {
+        setShowPasscodeUnlock(true);
+      } else {
+        playUnlockSound();
+        onUpdateState((s) => ({ ...s, isLocked: false }));
+      }
     } else {
       playLockSound();
+      setShowPasscodeUnlock(false);
       onUpdateState((s) => ({ ...s, isLocked: true }));
     }
-  }, [state.isLocked, onUpdateState]);
+  }, [state.isLocked, state.faceId?.isPasscodeEnabled, onUpdateState]);
 
   const handleTurnOn = useCallback(() => {
     setIsBooting(true);
@@ -652,7 +629,7 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
       setIsHoldingPower(false);
       setHoldProgress(0);
       if (powerIntervalRef.current) clearInterval(powerIntervalRef.current);
-      playBiometricTickSound();
+      playCameraControlClick();
       setIsPowerMenuOpen(true);
     }, duration);
   }, [state.isScreenOff, handleTurnOn]);
@@ -942,38 +919,10 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
                   />
                 )}
 
-                {/* Top Lock Icon & Face ID Sensor Visual */}
+                {/* Top Lock Icon */}
                 <div className="flex flex-col items-center space-y-1 relative z-10">
                   <div className="h-10 flex items-center justify-center">
-                    {isFaceIdScanning ? (
-                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/80 border border-emerald-400 text-emerald-400 backdrop-blur-md shadow-[0_0_15px_rgba(34,197,94,0.4)] animate-pulse">
-                        <div className="w-5 h-5 rounded-full overflow-hidden relative border border-emerald-400 bg-neutral-900 flex items-center justify-center">
-                          <video
-                            ref={lockVideoRef}
-                            autoPlay
-                            playsInline
-                            muted
-                            className={`w-full h-full object-cover transform -scale-x-100 ${
-                              lockCameraActive ? 'opacity-100' : 'opacity-0'
-                            }`}
-                          />
-                          {!lockCameraActive && <Scan className="w-3 h-3 text-emerald-400 animate-spin" />}
-                        </div>
-                        <span className="text-[10px] font-bold tracking-wider uppercase">Scanning Face...</span>
-                      </div>
-                    ) : isFaceIdUnlocked ? (
-                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500 text-white backdrop-blur-md shadow-lg animate-scale-up">
-                        <Unlock className="w-4 h-4" />
-                        <span className="text-[10px] font-bold">Face ID Verified</span>
-                      </div>
-                    ) : state.faceId.isEnrolled && state.faceId.useForIphoneUnlock ? (
-                      <div className="flex items-center gap-1 opacity-85 hover:opacity-100 transition-opacity">
-                        <Lock className="w-4 h-4" />
-                        <span className="text-[9px] text-white/70 font-medium">Face ID Ready</span>
-                      </div>
-                    ) : (
-                      <Lock className="w-4 h-4 opacity-80" />
-                    )}
+                    <Lock className="w-4 h-4 opacity-80" />
                   </div>
                   <p className="text-xs font-semibold uppercase tracking-wider opacity-90">{liveClock.fullDateString}</p>
                   <h1 className="text-6xl font-light tracking-tighter">{liveClock.timeString}</h1>
@@ -1008,17 +957,15 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
 
                   <div className="flex flex-col items-center">
                     <span className="text-[11px] font-medium opacity-80 animate-pulse">
-                      {state.faceId.isEnrolled && state.faceId.useForIphoneUnlock
-                        ? 'Tap to unlock with Face ID'
-                        : 'Swipe up to open'}
+                      {state.faceId?.isPasscodeEnabled ? 'Swipe up to unlock' : 'Swipe up to open'}
                     </span>
-                    {state.faceId.isPasscodeEnabled && (
+                    {state.faceId?.isPasscodeEnabled && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setShowPasscodeUnlock(true);
                         }}
-                        className="text-[9px] text-white/60 hover:text-white underline mt-0.5"
+                        className="text-[9px] text-white/60 hover:text-white underline mt-0.5 cursor-pointer"
                       >
                         Enter Passcode
                       </button>
@@ -1209,8 +1156,8 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
             onMouseUp={handleTouchEnd}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
-            onClick={goHome}
-            title="Swipe up or Click to Return Home"
+            onClick={handleHomeBarClick}
+            title="Swipe up or Click to Return Home / Unlock"
             className="h-7 w-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity z-40 bg-transparent"
           >
             <div className="w-32 h-1 bg-white/75 rounded-full shadow-md" />

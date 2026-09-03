@@ -422,8 +422,8 @@ export function stopMusicSynthesis() {
   }
 }
 
-// Face ID Authentication Sounds
-export function playFaceIdSuccessSound() {
+// Confirmation & Error Sounds
+export function playSuccessChime() {
   const ctx = getAudioContext();
   if (!ctx) return;
   const now = ctx.currentTime;
@@ -452,8 +452,9 @@ export function playFaceIdSuccessSound() {
   osc2.start(now + 0.08);
   osc2.stop(now + 0.22);
 }
+export const playFaceIdSuccessSound = playSuccessChime;
 
-export function playFaceIdFailureSound() {
+export function playPasscodeErrorSound() {
   const ctx = getAudioContext();
   if (!ctx) return;
   const now = ctx.currentTime;
@@ -472,6 +473,7 @@ export function playFaceIdFailureSound() {
     osc.stop(now + offset + 0.05);
   });
 }
+export const playFaceIdFailureSound = playPasscodeErrorSound;
 
 export function playBiometricTickSound() {
   const ctx = getAudioContext();

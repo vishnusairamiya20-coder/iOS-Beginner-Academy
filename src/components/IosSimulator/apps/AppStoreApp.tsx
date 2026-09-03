@@ -258,31 +258,26 @@ export const AppStoreApp: React.FC<AppStoreAppProps> = ({ state, onOpenApp, onUp
   const [downloadingAppId, setDownloadingAppId] = useState<string | null>(null);
   const [downloadProgress, setDownloadProgress] = useState<number>(0);
   const [installedAppIds, setInstalledAppIds] = useState<string[]>(state.installedApps || ['instagram', 'whatsapp', 'youtube', 'pinterest']);
-  const [faceIdPrompt, setFaceIdPrompt] = useState<string | null>(null);
 
   const handleInstall = (app: StoreApp) => {
-    setFaceIdPrompt(app.name);
-    setTimeout(() => {
-      setFaceIdPrompt(null);
-      setDownloadingAppId(app.id);
-      setDownloadProgress(15);
+    setDownloadingAppId(app.id);
+    setDownloadProgress(15);
 
-      const interval = setInterval(() => {
-        setDownloadProgress((prev) => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setDownloadingAppId(null);
-            setInstalledAppIds((ids) => [...ids, app.id]);
-            onUpdateState?.((s) => ({
-              ...s,
-              installedApps: Array.from(new Set([...(s.installedApps || []), app.id]))
-            }));
-            return 100;
-          }
-          return prev + 25;
-        });
-      }, 300);
-    }, 1200);
+    const interval = setInterval(() => {
+      setDownloadProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setDownloadingAppId(null);
+          setInstalledAppIds((ids) => [...ids, app.id]);
+          onUpdateState?.((s) => ({
+            ...s,
+            installedApps: Array.from(new Set([...(s.installedApps || []), app.id]))
+          }));
+          return 100;
+        }
+        return prev + 25;
+      });
+    }, 300);
   };
 
   const filteredApps = STORE_CATALOG.filter((app) => {
@@ -296,17 +291,6 @@ export const AppStoreApp: React.FC<AppStoreAppProps> = ({ state, onOpenApp, onUp
 
   return (
     <div className={`h-full flex flex-col ${state.isDarkMode ? 'bg-black text-white' : 'bg-[#F2F2F7] text-black'} select-none font-sans relative`}>
-      {/* Face ID Double-Click Side Button Prompt */}
-      {faceIdPrompt && (
-        <div className="absolute inset-0 bg-black/75 backdrop-blur-md z-50 flex flex-col items-center justify-center space-y-4 animate-fade-in p-6 text-center">
-          <div className="w-16 h-16 rounded-3xl border-2 border-blue-400 flex items-center justify-center text-3xl animate-pulse">
-            😃
-          </div>
-          <p className="text-white font-bold text-sm">Confirm with Face ID</p>
-          <p className="text-neutral-400 text-xs">Double-click side button to install {faceIdPrompt}</p>
-        </div>
-      )}
-
       {/* App Detail Fullscreen Modal */}
       {selectedApp && (
         <div className={`absolute inset-0 z-40 flex flex-col pt-12 ${state.isDarkMode ? 'bg-black text-white' : 'bg-white text-black'} animate-fade-in`}>
