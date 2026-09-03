@@ -223,7 +223,8 @@ export const PhotosApp: React.FC<PhotosAppProps> = ({ state, onUpdateState }) =>
                 <div
                   onClick={() => {
                     let targetWallpaper = 'beach';
-                    if (selectedPhoto.id === 'p-beach-sunset') targetWallpaper = 'beach_sunset';
+                    if (selectedPhoto.id === 'p-f1' || selectedPhoto.id.includes('f1')) targetWallpaper = 'f1';
+                    else if (selectedPhoto.id === 'p-beach-sunset') targetWallpaper = 'beach_sunset';
                     else if (selectedPhoto.id === 'p-beach-tropical' || selectedPhoto.id === 'p4') targetWallpaper = 'beach_tropical';
                     else if (selectedPhoto.id === 'p-ironman') targetWallpaper = 'ironman';
                     else if (selectedPhoto.id === 'p-ironman-suit') targetWallpaper = 'ironman_suit';
@@ -251,7 +252,14 @@ export const PhotosApp: React.FC<PhotosAppProps> = ({ state, onUpdateState }) =>
             <div className="p-3 bg-neutral-900/95 backdrop-blur-xl rounded-2xl border border-neutral-800 space-y-1 text-xs mb-2 animate-fade-in">
               <p className="font-bold text-sm text-white">{selectedPhoto.title}</p>
               <p className="text-[11px] text-neutral-400">Resolution: 1179 × 2556 • Ultra High Definition 4K</p>
-              <p className="text-[11px] text-neutral-400">Status: {state.wallpaper.includes('beach') && selectedPhoto.id.includes('beach') ? 'Active Device Wallpaper' : 'Ready to Apply'}</p>
+              <p className="text-[11px] text-neutral-400">
+                Status:{' '}
+                {(state.wallpaper === 'f1' && (selectedPhoto.id === 'p-f1' || selectedPhoto.id.includes('f1'))) ||
+                (state.wallpaper.includes('beach') && selectedPhoto.id.includes('beach')) ||
+                (state.wallpaper.includes('ironman') && selectedPhoto.id.includes('ironman'))
+                  ? 'Active Device Wallpaper'
+                  : 'Ready to Apply'}
+              </p>
             </div>
           )}
 
@@ -263,7 +271,8 @@ export const PhotosApp: React.FC<PhotosAppProps> = ({ state, onUpdateState }) =>
             <button
               onClick={() => {
                 let targetWallpaper = 'beach';
-                if (selectedPhoto.id === 'p-beach-sunset') targetWallpaper = 'beach_sunset';
+                if (selectedPhoto.id === 'p-f1' || selectedPhoto.id.includes('f1')) targetWallpaper = 'f1';
+                else if (selectedPhoto.id === 'p-beach-sunset') targetWallpaper = 'beach_sunset';
                 else if (selectedPhoto.id === 'p-beach-tropical' || selectedPhoto.id === 'p4') targetWallpaper = 'beach_tropical';
                 else if (selectedPhoto.id === 'p-ironman') targetWallpaper = 'ironman';
                 else if (selectedPhoto.id === 'p-ironman-suit') targetWallpaper = 'ironman_suit';

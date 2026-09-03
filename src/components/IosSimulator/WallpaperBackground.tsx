@@ -8,12 +8,55 @@ interface WallpaperBackgroundProps {
 }
 
 export const WallpaperBackground: React.FC<WallpaperBackgroundProps> = ({
-  wallpaper = 'beach',
+  wallpaper = 'f1',
   isDarkMode = false,
   isLockScreen = false,
   className = ''
 }) => {
-  // 1. SEA BEACH WALLPAPERS
+  // 1. FORMULA 1 CAR CINEMATIC WALLPAPER
+  if (wallpaper === 'f1' || wallpaper === 'f1_car' || wallpaper === 'f1_racing') {
+    return (
+      <div className={`absolute inset-0 overflow-hidden select-none pointer-events-none ${className}`}>
+        {/* Ultra HD Photorealistic F1 Car Photo */}
+        <img
+          src="/f1_car_wallpaper.jpg"
+          alt="Formula 1 Race Car Wallpaper"
+          referrerPolicy="no-referrer"
+          className="absolute inset-0 w-full h-full object-cover object-center transform scale-105"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            if (target.src.indexOf('f1_car_wallpaper.jpg') === -1) {
+              target.src = '/f1_car_wallpaper.jpg';
+            }
+          }}
+        />
+
+        {/* Speed blur & track atmospheric lighting */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/40 pointer-events-none" />
+
+        {/* Subtle F1 Telemetry HUD Overlay */}
+        <div className="absolute top-24 right-4 text-right font-mono text-[7px] tracking-widest text-red-500/80 drop-shadow-md">
+          <div className="font-bold flex items-center justify-end gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" />
+            DRS ACTIVE // GEAR 8
+          </div>
+          <div>SPEED: 334 KM/H</div>
+          <div>APEX LATERAL: 4.8G</div>
+        </div>
+
+        {/* Lock Screen / Home Screen readability gradient overlay */}
+        <div
+          className={`absolute inset-0 pointer-events-none ${
+            isLockScreen
+              ? 'bg-gradient-to-b from-black/50 via-transparent to-black/70'
+              : 'bg-gradient-to-b from-black/30 via-transparent to-black/50'
+          }`}
+        />
+      </div>
+    );
+  }
+
+  // 2. SEA BEACH WALLPAPERS
   if (wallpaper === 'beach' || wallpaper === 'beach_wallpaper' || wallpaper === 'beach_sunset' || wallpaper === 'beach_tropical') {
     let photoSrc = '/beach_wallpaper.jpg';
     if (wallpaper === 'beach_sunset') photoSrc = '/beach_sunset.jpg';

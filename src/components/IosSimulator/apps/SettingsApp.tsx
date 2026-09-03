@@ -593,10 +593,16 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
   if (activeSubpage === 'wallpaper') {
     const wallpapersList = [
       {
+        id: 'f1',
+        name: 'Formula 1 Racing Car',
+        subtitle: 'High-speed aerodynamic circuit racer with sparks & telemetry HUD',
+        tag: 'Featured F1'
+      },
+      {
         id: 'beach',
         name: 'Tropical Sea Beach',
         subtitle: 'Crystal turquoise ocean water, white sand shore & sunny sky',
-        tag: 'Active Beach'
+        tag: 'Beach'
       },
       {
         id: 'beach_sunset',
@@ -1294,7 +1300,9 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
             </div>
             <div className="flex items-center gap-1 text-neutral-400 text-[11px]">
               <span className="capitalize">
-                {state.wallpaper === 'beach' || state.wallpaper === 'beach_wallpaper'
+                {state.wallpaper === 'f1' || state.wallpaper === 'f1_car' || state.wallpaper === 'f1_racing'
+                  ? '🏎️ Formula 1 Car'
+                  : state.wallpaper === 'beach' || state.wallpaper === 'beach_wallpaper'
                   ? '🏖️ Sea Beach'
                   : state.wallpaper === 'beach_sunset'
                   ? '🌅 Beach Sunset'

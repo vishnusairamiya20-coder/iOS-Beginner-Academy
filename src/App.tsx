@@ -73,7 +73,7 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
   volume: 70,
   batteryLevel: 94,
   isCharging: false,
-  wallpaper: 'beach',
+  wallpaper: 'f1',
 
   appleId: {
     name: 'Vishnu Sai Ramiya & Rohan R. Potdar',
@@ -96,7 +96,8 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
   activeCall: null,
 
   userPhotos: [
-    { id: 'p-beach', emoji: '🏖️', title: 'Tropical Sea Beach (Active Wallpaper)', url: '/beach_wallpaper.jpg', date: 'Today, 12:05 PM', isFavorite: true, isCameraRoll: true },
+    { id: 'p-f1', emoji: '🏎️', title: 'Formula 1 Racing Car (Active Wallpaper)', url: '/f1_car_wallpaper.jpg', date: 'Today, 12:30 PM', isFavorite: true, isCameraRoll: true },
+    { id: 'p-beach', emoji: '🏖️', title: 'Tropical Sea Beach', url: '/beach_wallpaper.jpg', date: 'Today, 12:05 PM', isFavorite: true, isCameraRoll: true },
     { id: 'p-beach-sunset', emoji: '🌅', title: 'Golden Hour Sea Beach Sunset', url: '/beach_sunset.jpg', date: 'Today, 11:40 AM', isFavorite: true, isCameraRoll: true },
     { id: 'p-beach-tropical', emoji: '🏝️', title: 'Azure Ocean Coral Reef Shore', url: '/beach_tropical.jpg', date: 'Today, 10:50 AM', isFavorite: true, isCameraRoll: true },
     { id: 'p-ironman', emoji: '🦸‍♂️', title: 'Iron Man (Cinematic Armor)', url: '/ironman_photo.jpg', date: 'Today, 10:15 AM', isFavorite: true, isCameraRoll: true },
