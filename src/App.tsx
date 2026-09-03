@@ -84,7 +84,7 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
   volume: 70,
   batteryLevel: 94,
   isCharging: false,
-  wallpaper: 'f1',
+  wallpaper: 'doomsday',
 
   appleId: {
     name: 'Vishnu Sai Ramiya & Rohan R. Potdar',
@@ -107,7 +107,8 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
   activeCall: null,
 
   userPhotos: [
-    { id: 'p-f1', emoji: '🏎️', title: 'Formula 1 Racing Car (Active Wallpaper)', url: '/f1_car_wallpaper.jpg', date: 'Today, 12:30 PM', isFavorite: true, isCameraRoll: true },
+    { id: 'p-doomsday', emoji: '🌋', title: 'Doomsday Apocalypse (Active Wallpaper)', url: '/doomsday_wallpaper.jpg', date: 'Just now', isFavorite: true, isCameraRoll: true },
+    { id: 'p-f1', emoji: '🏎️', title: 'Formula 1 Racing Car', url: '/f1_car_wallpaper.jpg', date: 'Today, 12:30 PM', isFavorite: true, isCameraRoll: true },
     { id: 'p-beach', emoji: '🏖️', title: 'Tropical Sea Beach', url: '/beach_wallpaper.jpg', date: 'Today, 12:05 PM', isFavorite: true, isCameraRoll: true },
     { id: 'p-beach-sunset', emoji: '🌅', title: 'Golden Hour Sea Beach Sunset', url: '/beach_sunset.jpg', date: 'Today, 11:40 AM', isFavorite: true, isCameraRoll: true },
     { id: 'p-beach-tropical', emoji: '🏝️', title: 'Azure Ocean Coral Reef Shore', url: '/beach_tropical.jpg', date: 'Today, 10:50 AM', isFavorite: true, isCameraRoll: true },

@@ -8,11 +8,52 @@ interface WallpaperBackgroundProps {
 }
 
 export const WallpaperBackground: React.FC<WallpaperBackgroundProps> = ({
-  wallpaper = 'f1',
+  wallpaper = 'doomsday',
   isDarkMode = false,
   isLockScreen = false,
   className = ''
 }) => {
+  // 0. DOOMSDAY CINEMATIC APOCALYPTIC WALLPAPER
+  if (wallpaper === 'doomsday' || wallpaper === 'doomsday_wallpaper' || wallpaper === 'doomsday_apocalypse') {
+    return (
+      <div className={`absolute inset-0 overflow-hidden select-none pointer-events-none ${className}`}>
+        {/* Ultra HD Doomsday Wallpaper Photo */}
+        <img
+          src="/doomsday_wallpaper.jpg"
+          alt="Doomsday Apocalyptic Sky Wallpaper"
+          referrerPolicy="no-referrer"
+          className="absolute inset-0 w-full h-full object-cover object-center transform scale-105"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            if (target.src.indexOf('doomsday_wallpaper.jpg') === -1) {
+              target.src = '/doomsday_wallpaper.jpg';
+            }
+          }}
+        />
+
+        {/* Cinematic volcanic ember & apocalyptic crimson lighting */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-orange-950/20 to-black/40 pointer-events-none" />
+
+        {/* Ambient atmospheric ember particles */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-60">
+          <div className="absolute bottom-20 left-12 w-1.5 h-1.5 rounded-full bg-amber-500 blur-[1px] animate-pulse" />
+          <div className="absolute bottom-36 left-28 w-1 h-1 rounded-full bg-orange-400 blur-[0.5px] animate-ping" />
+          <div className="absolute bottom-28 right-16 w-1 h-1 rounded-full bg-red-500 blur-[0.5px] animate-pulse" />
+          <div className="absolute bottom-48 right-24 w-1.5 h-1.5 rounded-full bg-amber-400 blur-[1px] animate-ping" />
+        </div>
+
+        {/* Lock Screen / Home Screen readability gradient overlay */}
+        <div
+          className={`absolute inset-0 pointer-events-none ${
+            isLockScreen
+              ? 'bg-gradient-to-b from-black/55 via-transparent to-black/75'
+              : 'bg-gradient-to-b from-black/35 via-transparent to-black/55'
+          }`}
+        />
+      </div>
+    );
+  }
+
   // 1. FORMULA 1 CAR CINEMATIC WALLPAPER
   if (wallpaper === 'f1' || wallpaper === 'f1_car' || wallpaper === 'f1_racing') {
     return (

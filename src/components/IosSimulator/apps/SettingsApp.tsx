@@ -548,6 +548,12 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
   if (activeSubpage === 'wallpaper') {
     const wallpapersList = [
       {
+        id: 'doomsday',
+        name: 'Doomsday Apocalypse',
+        subtitle: 'Towering volcanic storm clouds, falling meteors, fissures & ember sky',
+        tag: 'Apocalypse'
+      },
+      {
         id: 'f1',
         name: 'Formula 1 Racing Car',
         subtitle: 'High-speed aerodynamic circuit racer with sparks & telemetry HUD',
@@ -900,7 +906,9 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
             </div>
             <div className="flex items-center gap-1 text-neutral-400 text-[11px]">
               <span className="capitalize">
-                {state.wallpaper === 'f1' || state.wallpaper === 'f1_car' || state.wallpaper === 'f1_racing'
+                {state.wallpaper === 'doomsday' || state.wallpaper === 'doomsday_wallpaper'
+                  ? '🌋 Doomsday'
+                  : state.wallpaper === 'f1' || state.wallpaper === 'f1_car' || state.wallpaper === 'f1_racing'
                   ? '🏎️ Formula 1 Car'
                   : state.wallpaper === 'beach' || state.wallpaper === 'beach_wallpaper'
                   ? '🏖️ Sea Beach'
