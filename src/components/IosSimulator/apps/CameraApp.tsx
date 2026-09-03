@@ -10,10 +10,11 @@ import {
   Timer,
   Upload,
   Layers,
-  Circle
+  Circle,
+  SlidersHorizontal
 } from 'lucide-react';
 import { SimulatorState, UserPhotoItem } from '../../../types';
-import { playCameraShutterSound } from '../../../utils/audioUtils';
+import { playCameraShutterSound, playCameraControlLightPress } from '../../../utils/audioUtils';
 
 interface CameraAppProps {
   state: SimulatorState;
@@ -33,6 +34,29 @@ export const CameraApp: React.FC<CameraAppProps> = ({ state, onUpdateState }) =>
   const [videoDuration, setVideoDuration] = useState(0);
   const [cameraStreamAvailable, setCameraStreamAvailable] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
+
+  const cc = state.cameraControl || {
+    isOpen: false,
+    activeTool: 'zoom',
+    zoomValue: 1.0,
+    exposureValue: 0,
+    depthValue: 2.8,
+    activeCameraLens: '1x',
+    photographicStyle: 'Standard',
+    toneValue: 0
+  };
+
+  // Compute live visual effects from Camera Control
+  const brightnessVal = 1 + cc.exposureValue * 0.25;
+  const contrastVal = 1 + cc.toneValue / 200;
+  let styleFilter = '';
+  if (cc.photographicStyle === 'Vibrant') styleFilter = 'saturate(1.4) contrast(1.08)';
+  else if (cc.photographicStyle === 'Warm') styleFilter = 'sepia(0.22) saturate(1.15) brightness(1.02)';
+  else if (cc.photographicStyle === 'Cool') styleFilter = 'hue-rotate(185deg) saturate(1.1)';
+  else if (cc.photographicStyle === 'Dramatic') styleFilter = 'grayscale(1) contrast(1.35)';
+
+  const combinedFilter = `brightness(${brightnessVal}) contrast(${contrastVal}) ${styleFilter}`.trim();
+  const effectiveZoom = cc.zoomValue || 1.0;
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -222,13 +246,42 @@ export const CameraApp: React.FC<CameraAppProps> = ({ state, onUpdateState }) =>
             <span>{formatVideoDuration(videoDuration)}</span>
           </div>
         ) : (
-          <div className="px-2.5 py-0.5 rounded-full bg-neutral-800/80 text-[10px] tracking-widest uppercase font-semibold text-neutral-300">
-            {mode}
+          <div className="flex items-center gap-2">
+            <div className="px-2.5 py-0.5 rounded-full bg-neutral-800/80 text-[10px] tracking-widest uppercase font-semibold text-neutral-300">
+              {mode}
+            </div>
+            {cc.photographicStyle !== 'Standard' && (
+              <span className="px-1.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 text-[8px] font-semibold">
+                {cc.photographicStyle}
+              </span>
+            )}
           </div>
         )}
 
-        {/* Timer toggle & Device File Import */}
-        <div className="flex items-center gap-2">
+        {/* Camera Control HUD toggle, Timer toggle & Device File Import */}
+        <div className="flex items-center gap-1.5">
+          {/* iOS 18 Camera Control HUD Button */}
+          <button
+            onClick={() => {
+              playCameraControlLightPress();
+              onUpdateState((s) => ({
+                ...s,
+                cameraControl: {
+                  ...s.cameraControl,
+                  isOpen: !s.cameraControl.isOpen,
+                },
+              }));
+            }}
+            title="iOS 18 Camera Control HUD (Tools & Lenses)"
+            className={`w-7 h-7 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+              cc.isOpen
+                ? 'bg-amber-400 text-black shadow-md ring-2 ring-amber-400/50'
+                : 'bg-neutral-800/80 text-neutral-300 hover:text-white hover:bg-neutral-700'
+            }`}
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+          </button>
+
           <button
             onClick={() => setTimerMode((t) => (t === 0 ? 3 : t === 3 ? 10 : 0))}
             title="Timer"
@@ -267,28 +320,44 @@ export const CameraApp: React.FC<CameraAppProps> = ({ state, onUpdateState }) =>
           playsInline
           muted
           autoPlay
+          style={{
+            transform: `scale(${effectiveZoom}) ${facingMode === 'user' ? 'scaleX(-1)' : ''}`,
+            filter: combinedFilter,
+            transition: 'transform 0.15s ease-out, filter 0.15s ease-out',
+          }}
           className={`absolute inset-0 w-full h-full object-cover z-0 transition-opacity ${
             cameraStreamAvailable ? 'opacity-100' : 'opacity-0 pointer-events-none'
-          } ${facingMode === 'user' ? 'scale-x-[-1]' : ''}`}
+          }`}
         />
 
         {/* Fallback Viewfinder if webcam permission is not granted */}
         {!cameraStreamAvailable && (
-          <div className="w-full h-full relative flex flex-col items-center justify-center bg-gradient-to-b from-neutral-800 via-neutral-900 to-black p-4 text-center">
-            <div className="relative z-10 space-y-2 max-w-[220px]">
+          <div
+            style={{ filter: combinedFilter }}
+            className="w-full h-full relative flex flex-col items-center justify-center bg-gradient-to-b from-neutral-800 via-neutral-900 to-black p-4 text-center transition-all"
+          >
+            <div
+              style={{
+                transform: `scale(${effectiveZoom})`,
+                transition: 'transform 0.15s ease-out',
+              }}
+              className="relative z-10 space-y-2 max-w-[220px]"
+            >
               <div
                 className={`w-32 h-32 mx-auto rounded-3xl bg-gradient-to-tr from-sky-400 via-indigo-400 to-purple-500 flex items-center justify-center shadow-2xl transition-transform duration-300 ${
-                  zoom === '0.5x' ? 'scale-75' : zoom === '2x' ? 'scale-125' : zoom === '3x' ? 'scale-150' : 'scale-100'
+                  mode === 'portrait' ? 'ring-4 ring-amber-400/40' : ''
                 }`}
               >
                 <span className="text-5xl">{mode === 'portrait' ? '👤' : '🌸'}</span>
               </div>
               <p className="text-neutral-300 text-[11px] font-medium">
-                {mode === 'portrait' ? 'Depth Effect (f/1.4) Active' : 'Primary Device Camera Ready'}
+                {mode === 'portrait'
+                  ? `Depth Effect (${cc.depthValue ? `ƒ/${cc.depthValue}` : 'ƒ/1.4'}) Active`
+                  : 'Primary Device Camera Ready'}
               </p>
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="px-3 py-1 rounded-full bg-blue-600/40 hover:bg-blue-600/70 border border-blue-400/40 text-blue-200 text-[10px] font-semibold"
+                className="px-3 py-1 rounded-full bg-blue-600/40 hover:bg-blue-600/70 border border-blue-400/40 text-blue-200 text-[10px] font-semibold cursor-pointer"
               >
                 + Import from My Computer
               </button>
@@ -309,19 +378,38 @@ export const CameraApp: React.FC<CameraAppProps> = ({ state, onUpdateState }) =>
           <div />
         </div>
 
-        {/* Optical Zoom Pill */}
-        <div className="absolute bottom-3 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 z-20">
-          {(['0.5x', '1x', '2x', '3x'] as const).map((z) => (
-            <button
-              key={z}
-              onClick={() => setZoom(z)}
-              className={`w-6 h-6 rounded-full text-[10px] font-bold transition-all flex items-center justify-center cursor-pointer ${
-                zoom === z ? 'bg-amber-400 text-black scale-110' : 'text-neutral-300 hover:text-white'
-              }`}
-            >
-              {z.replace('x', '')}
-            </button>
-          ))}
+        {/* Optical Zoom / Lens Pill */}
+        <div className="absolute bottom-3 flex items-center gap-1 bg-black/65 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/15 z-20 shadow-lg">
+          {(['0.5x', '1x', '2x', '5x'] as const).map((z) => {
+            const zNum = parseFloat(z.replace('x', ''));
+            const isMatch = Math.abs(effectiveZoom - zNum) < 0.2;
+            return (
+              <button
+                key={z}
+                onClick={() => {
+                  setZoom(z === '5x' ? '3x' : z);
+                  onUpdateState((s) => ({
+                    ...s,
+                    cameraControl: {
+                      ...s.cameraControl,
+                      zoomValue: zNum,
+                      activeCameraLens: z,
+                    },
+                  }));
+                }}
+                className={`w-6 h-6 rounded-full text-[10px] font-bold transition-all flex items-center justify-center cursor-pointer ${
+                  isMatch ? 'bg-amber-400 text-black scale-110 font-extrabold shadow' : 'text-neutral-300 hover:text-white'
+                }`}
+              >
+                {z.replace('x', '')}
+              </button>
+            );
+          })}
+          {effectiveZoom !== 0.5 && effectiveZoom !== 1 && effectiveZoom !== 2 && effectiveZoom !== 5 && (
+            <span className="text-[9px] font-mono text-amber-300 ml-1 px-1 py-0.5 rounded bg-white/10">
+              {effectiveZoom.toFixed(1)}x
+            </span>
+          )}
         </div>
       </div>
 

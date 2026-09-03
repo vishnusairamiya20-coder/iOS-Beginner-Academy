@@ -61,6 +61,17 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
   isSilentMode: false,
   isSiriOpen: false,
 
+  cameraControl: {
+    isOpen: false,
+    activeTool: 'zoom',
+    zoomValue: 1.0,
+    exposureValue: 0,
+    depthValue: 2.8,
+    activeCameraLens: '1x',
+    photographicStyle: 'Standard',
+    toneValue: 0,
+  },
+
   isWifiOn: true,
   isBluetoothOn: true,
   isCellularOn: true,

@@ -80,6 +80,18 @@ export interface SimulatorState {
   actionButtonMode: 'siri' | 'flashlight' | 'silent' | 'camera' | 'focus' | 'voicememo';
   isSilentMode: boolean;
   isSiriOpen: boolean;
+
+  // iOS 18 / iPhone 16 Camera Control State
+  cameraControl: {
+    isOpen: boolean;
+    activeTool: 'zoom' | 'exposure' | 'depth' | 'cameras' | 'styles' | 'tone';
+    zoomValue: number; // 0.5 to 5.0
+    exposureValue: number; // -2.0 to +2.0
+    depthValue: number; // 1.4 to 16.0
+    activeCameraLens: '0.5x' | '1x' | '2x' | '5x';
+    photographicStyle: 'Standard' | 'Vibrant' | 'Warm' | 'Cool' | 'Dramatic';
+    toneValue: number; // -100 to +100
+  };
   
   // Settings & Toggles
   isWifiOn: boolean;

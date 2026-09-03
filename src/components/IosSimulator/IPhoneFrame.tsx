@@ -19,9 +19,11 @@ import {
   Minus,
   Bell,
   BellOff,
-  Power
+  Power,
+  Camera,
+  SlidersHorizontal
 } from 'lucide-react';
-import { SimulatorState, IosAppId } from '../../types';
+import { SimulatorState, IosAppId, UserPhotoItem } from '../../types';
 import { DynamicIsland } from './DynamicIsland';
 import { HomeScreen } from './HomeScreen';
 import { ControlCenter } from './ControlCenter';
@@ -47,7 +49,21 @@ import { YouTubeApp } from './apps/YouTubeApp';
 import { PinterestApp } from './apps/PinterestApp';
 import { WallpaperBackground } from './WallpaperBackground';
 import { PasscodeKeypad } from './PasscodeKeypad';
-import { playLockSound, playUnlockSound, playVolumeStepSound, playCameraShutterSound, playFaceIdSuccessSound, playBiometricTickSound } from '../../utils/audioUtils';
+import { PowerMenuOverlay } from './PowerMenuOverlay';
+import { BootScreen } from './BootScreen';
+import { CameraControlOverlay } from './CameraControlOverlay';
+import {
+  playLockSound,
+  playUnlockSound,
+  playVolumeStepSound,
+  playCameraShutterSound,
+  playFaceIdSuccessSound,
+  playBiometricTickSound,
+  playPowerDownSound,
+  playCameraControlClick,
+  playCameraControlLightPress,
+  playCameraControlScrubTick
+} from '../../utils/audioUtils';
 import { useLiveClock } from '../../utils/dateTime';
 
 interface IPhoneFrameProps {
@@ -71,6 +87,24 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
   const [isVolumeHudVisible, setIsVolumeHudVisible] = useState(false);
   const volumeHudTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const previousVolumeRef = useRef<number>(state.volume || 70);
+
+  // Power Off, Restart, and Booting states
+  const [isPowerMenuOpen, setIsPowerMenuOpen] = useState(false);
+  const [isBooting, setIsBooting] = useState(false);
+  const [isRestarting, setIsRestarting] = useState(false);
+  const [isHoldingPower, setIsHoldingPower] = useState(false);
+  const [holdProgress, setHoldProgress] = useState(0);
+
+  // Camera Control physical button interaction state
+  const [isCameraControlInteracting, setIsCameraControlInteracting] = useState(false);
+  const cameraControlDragStartYRef = useRef<number | null>(null);
+  const cameraControlDragDistRef = useRef<number>(0);
+  const cameraControlHoldTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isCameraControlLongPressedRef = useRef(false);
+
+  const powerHoldTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const powerIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const didLongPressRef = useRef<boolean>(false);
 
   const showVolumeHUD = useCallback((newVolume: number) => {
     onUpdateState((s) => ({ ...s, volume: newVolume }));
@@ -268,6 +302,246 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
     setTimeout(() => setScreenshotFlash(false), 300);
   };
 
+  const captureCameraPhoto = useCallback(() => {
+    playCameraShutterSound();
+    setScreenshotFlash(true);
+    setTimeout(() => setScreenshotFlash(false), 250);
+
+    const currentStyle = state.cameraControl?.photographicStyle || 'Standard';
+    const zoomText = (state.cameraControl?.zoomValue || 1.0).toFixed(1);
+    const newPhoto: UserPhotoItem = {
+      id: Date.now().toString(),
+      emoji: '📸',
+      title: `Camera Control Snap (${currentStyle} • ${zoomText}x)`,
+      date: 'Just now',
+      isFavorite: false,
+      isCameraRoll: true
+    };
+
+    onUpdateState((s) => ({
+      ...s,
+      userPhotos: [newPhoto, ...s.userPhotos]
+    }));
+  }, [state.cameraControl?.photographicStyle, state.cameraControl?.zoomValue, onUpdateState]);
+
+  const handleCameraControlClick = useCallback(() => {
+    playCameraControlClick();
+
+    if (state.isScreenOff) {
+      setIsBooting(false);
+      onUpdateState((s) => ({
+        ...s,
+        isScreenOff: false,
+        isLocked: false,
+        currentApp: 'camera'
+      }));
+      return;
+    }
+
+    if (state.isLocked) {
+      onUpdateState((s) => ({
+        ...s,
+        isLocked: false,
+        currentApp: 'camera'
+      }));
+      return;
+    }
+
+    if (state.currentApp !== 'camera') {
+      openApp('camera');
+      return;
+    }
+
+    // Inside camera: take photo
+    captureCameraPhoto();
+  }, [state.isScreenOff, state.isLocked, state.currentApp, captureCameraPhoto, onUpdateState]);
+
+  const handleCameraControlLightPress = useCallback(() => {
+    playCameraControlLightPress();
+
+    if (state.isScreenOff || state.isLocked || state.currentApp !== 'camera') {
+      onUpdateState((s) => ({
+        ...s,
+        isScreenOff: false,
+        isLocked: false,
+        currentApp: 'camera',
+        cameraControl: {
+          ...s.cameraControl,
+          isOpen: true
+        }
+      }));
+      return;
+    }
+
+    // Toggle or cycle tool
+    onUpdateState((s) => {
+      const cc = s.cameraControl || {
+        isOpen: false,
+        activeTool: 'zoom',
+        zoomValue: 1.0,
+        exposureValue: 0,
+        depthValue: 2.8,
+        activeCameraLens: '1x',
+        photographicStyle: 'Standard',
+        toneValue: 0
+      };
+
+      if (!cc.isOpen) {
+        return {
+          ...s,
+          cameraControl: {
+            ...cc,
+            isOpen: true
+          }
+        };
+      }
+
+      const tools: Array<'zoom' | 'exposure' | 'depth' | 'cameras' | 'styles' | 'tone'> = [
+        'zoom',
+        'exposure',
+        'depth',
+        'cameras',
+        'styles',
+        'tone'
+      ];
+      const curIdx = tools.indexOf(cc.activeTool);
+      const nextIdx = (curIdx + 1) % tools.length;
+      return {
+        ...s,
+        cameraControl: {
+          ...cc,
+          activeTool: tools[nextIdx]
+        }
+      };
+    });
+  }, [state.isScreenOff, state.isLocked, state.currentApp, onUpdateState]);
+
+  const handleCameraControlDoubleClick = useCallback((e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    handleCameraControlLightPress();
+  }, [handleCameraControlLightPress]);
+
+  const handleCameraControlPointerDown = (e: React.PointerEvent) => {
+    e.stopPropagation();
+    setIsCameraControlInteracting(true);
+    cameraControlDragStartYRef.current = e.clientY;
+    cameraControlDragDistRef.current = 0;
+    isCameraControlLongPressedRef.current = false;
+    try {
+      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    } catch {
+      // ignore
+    }
+
+    cameraControlHoldTimerRef.current = setTimeout(() => {
+      isCameraControlLongPressedRef.current = true;
+      handleCameraControlLightPress();
+    }, 450);
+  };
+
+  const handleCameraControlPointerMove = (e: React.PointerEvent) => {
+    if (cameraControlDragStartYRef.current === null) return;
+    const deltaY = cameraControlDragStartYRef.current - e.clientY;
+    if (Math.abs(deltaY) < 3) return;
+
+    if (cameraControlHoldTimerRef.current) {
+      clearTimeout(cameraControlHoldTimerRef.current);
+      cameraControlHoldTimerRef.current = null;
+    }
+
+    cameraControlDragDistRef.current += Math.abs(deltaY);
+    cameraControlDragStartYRef.current = e.clientY;
+    playCameraControlScrubTick();
+
+    const factor = deltaY > 0 ? 1 : -1;
+
+    onUpdateState((s) => {
+      const cc = {
+        ...(s.cameraControl || {
+          isOpen: false,
+          activeTool: 'zoom',
+          zoomValue: 1.0,
+          exposureValue: 0,
+          depthValue: 2.8,
+          activeCameraLens: '1x',
+          photographicStyle: 'Standard',
+          toneValue: 0
+        }),
+        isOpen: true
+      };
+
+      if (cc.activeTool === 'zoom') {
+        const next = Math.round((cc.zoomValue + factor * 0.1) * 10) / 10;
+        cc.zoomValue = Math.max(0.5, Math.min(5.0, next));
+      } else if (cc.activeTool === 'exposure') {
+        const next = Math.round((cc.exposureValue + factor * 0.1) * 10) / 10;
+        cc.exposureValue = Math.max(-2.0, Math.min(2.0, next));
+      } else if (cc.activeTool === 'depth') {
+        const apertures = [1.4, 1.8, 2.0, 2.8, 3.5, 4.0, 5.6, 8.0, 11.0, 16.0];
+        const curIdx = apertures.findIndex((a) => a === cc.depthValue);
+        const validIdx = curIdx >= 0 ? curIdx : 3;
+        const nextIdx = Math.max(0, Math.min(apertures.length - 1, validIdx + factor));
+        cc.depthValue = apertures[nextIdx];
+      } else if (cc.activeTool === 'cameras') {
+        const lenses: Array<'0.5x' | '1x' | '2x' | '5x'> = ['0.5x', '1x', '2x', '5x'];
+        const curIdx = lenses.indexOf(cc.activeCameraLens);
+        const validIdx = curIdx >= 0 ? curIdx : 1;
+        const nextIdx = Math.max(0, Math.min(lenses.length - 1, validIdx + factor));
+        cc.activeCameraLens = lenses[nextIdx];
+        cc.zoomValue = parseFloat(lenses[nextIdx].replace('x', ''));
+      } else if (cc.activeTool === 'styles') {
+        const styles: Array<'Standard' | 'Vibrant' | 'Warm' | 'Cool' | 'Dramatic'> = [
+          'Standard',
+          'Vibrant',
+          'Warm',
+          'Cool',
+          'Dramatic'
+        ];
+        const curIdx = styles.indexOf(cc.photographicStyle);
+        const validIdx = curIdx >= 0 ? curIdx : 0;
+        const nextIdx = (validIdx + factor + styles.length) % styles.length;
+        cc.photographicStyle = styles[nextIdx];
+      } else if (cc.activeTool === 'tone') {
+        const next = cc.toneValue + factor * 5;
+        cc.toneValue = Math.max(-100, Math.min(100, next));
+      }
+
+      return {
+        ...s,
+        isScreenOff: false,
+        isLocked: false,
+        currentApp: 'camera',
+        cameraControl: cc
+      };
+    });
+  };
+
+  const handleCameraControlPointerUp = (e: React.PointerEvent) => {
+    setIsCameraControlInteracting(false);
+    if (cameraControlHoldTimerRef.current) {
+      clearTimeout(cameraControlHoldTimerRef.current);
+      cameraControlHoldTimerRef.current = null;
+    }
+
+    try {
+      (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+    } catch {
+      // ignore
+    }
+
+    if (
+      cameraControlDragStartYRef.current !== null &&
+      cameraControlDragDistRef.current < 6 &&
+      !isCameraControlLongPressedRef.current
+    ) {
+      handleCameraControlClick();
+    }
+
+    cameraControlDragStartYRef.current = null;
+    cameraControlDragDistRef.current = 0;
+    isCameraControlLongPressedRef.current = false;
+  };
+
   const handleActionButtonPress = () => {
     playVolumeStepSound(state.volume);
     if (state.actionButtonMode === 'siri') {
@@ -285,7 +559,7 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
     }
   };
 
-  const handlePowerButton = () => {
+  const handlePowerButton = useCallback(() => {
     if (state.isLocked) {
       playUnlockSound();
       onUpdateState((s) => ({ ...s, isLocked: false }));
@@ -293,7 +567,135 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
       playLockSound();
       onUpdateState((s) => ({ ...s, isLocked: true }));
     }
-  };
+  }, [state.isLocked, onUpdateState]);
+
+  const handleTurnOn = useCallback(() => {
+    setIsBooting(true);
+    setIsRestarting(false);
+  }, []);
+
+  const handlePowerOff = useCallback(() => {
+    setIsPowerMenuOpen(false);
+    playPowerDownSound();
+    onUpdateState((s) => ({
+      ...s,
+      isScreenOff: true,
+      isLocked: true,
+      isControlCenterOpen: false,
+      isNotificationCenterOpen: false,
+      isSpotlightOpen: false,
+      isAppSwitcherOpen: false,
+      isSiriOpen: false,
+    }));
+  }, [onUpdateState]);
+
+  const handleRestart = useCallback(() => {
+    setIsPowerMenuOpen(false);
+    playPowerDownSound();
+    onUpdateState((s) => ({
+      ...s,
+      isScreenOff: true,
+      isLocked: true,
+      isControlCenterOpen: false,
+      isNotificationCenterOpen: false,
+      isSpotlightOpen: false,
+      isAppSwitcherOpen: false,
+      isSiriOpen: false,
+    }));
+    setTimeout(() => {
+      setIsRestarting(true);
+      setIsBooting(true);
+    }, 450);
+  }, [onUpdateState]);
+
+  const handleBootComplete = useCallback(() => {
+    setIsBooting(false);
+    setIsRestarting(false);
+    onUpdateState((s) => ({
+      ...s,
+      isScreenOff: false,
+      isLocked: true,
+      currentApp: 'home',
+    }));
+  }, [onUpdateState]);
+
+  const startPowerHold = useCallback((e?: React.SyntheticEvent) => {
+    if (e) e.stopPropagation();
+    didLongPressRef.current = false;
+    setIsHoldingPower(true);
+    setHoldProgress(0);
+
+    if (powerHoldTimerRef.current) clearTimeout(powerHoldTimerRef.current);
+    if (powerIntervalRef.current) clearInterval(powerIntervalRef.current);
+
+    // If phone is currently powered off, holding or clicking turns it on!
+    if (state.isScreenOff) {
+      powerHoldTimerRef.current = setTimeout(() => {
+        didLongPressRef.current = true;
+        setIsHoldingPower(false);
+        setHoldProgress(0);
+        handleTurnOn();
+      }, 400);
+      return;
+    }
+
+    const startTime = Date.now();
+    const duration = 650; // 650ms long-press threshold
+
+    powerIntervalRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      setHoldProgress(Math.min(100, Math.floor((elapsed / duration) * 100)));
+    }, 25);
+
+    powerHoldTimerRef.current = setTimeout(() => {
+      didLongPressRef.current = true;
+      setIsHoldingPower(false);
+      setHoldProgress(0);
+      if (powerIntervalRef.current) clearInterval(powerIntervalRef.current);
+      playBiometricTickSound();
+      setIsPowerMenuOpen(true);
+    }, duration);
+  }, [state.isScreenOff, handleTurnOn]);
+
+  const endPowerHold = useCallback((e?: React.SyntheticEvent) => {
+    if (e) e.stopPropagation();
+    setIsHoldingPower(false);
+    setHoldProgress(0);
+    if (powerHoldTimerRef.current) {
+      clearTimeout(powerHoldTimerRef.current);
+      powerHoldTimerRef.current = null;
+    }
+    if (powerIntervalRef.current) {
+      clearInterval(powerIntervalRef.current);
+      powerIntervalRef.current = null;
+    }
+
+    if (didLongPressRef.current) {
+      didLongPressRef.current = false;
+      return;
+    }
+
+    // Short-press (click)
+    if (state.isScreenOff) {
+      handleTurnOn();
+    } else {
+      handlePowerButton();
+    }
+  }, [state.isScreenOff, handleTurnOn, handlePowerButton]);
+
+  const cancelPowerHold = useCallback(() => {
+    setIsHoldingPower(false);
+    setHoldProgress(0);
+    if (powerHoldTimerRef.current) {
+      clearTimeout(powerHoldTimerRef.current);
+      powerHoldTimerRef.current = null;
+    }
+    if (powerIntervalRef.current) {
+      clearInterval(powerIntervalRef.current);
+      powerIntervalRef.current = null;
+    }
+    didLongPressRef.current = false;
+  }, []);
 
   return (
     <div className="relative flex flex-col items-center justify-center p-2 select-none">
@@ -338,15 +740,131 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
 
         {/* Hardware Side Power Button (Right edge) */}
         <button
-          onClick={handlePowerButton}
-          title={state.isLocked ? "Power Button (Wake / Unlock)" : "Power Button (Lock Screen)"}
-          className="group absolute -right-2 top-40 w-2.5 h-16 bg-neutral-700 hover:bg-neutral-500 active:scale-95 active:bg-neutral-400 rounded-r-md transition-all cursor-pointer shadow-md flex items-center justify-end pr-0.5"
+          id="hardware-power-button"
+          onPointerDown={startPowerHold}
+          onPointerUp={endPowerHold}
+          onPointerLeave={cancelPowerHold}
+          title={
+            state.isScreenOff
+              ? "Power Button: Click or hold to Turn On"
+              : "Power Button: Click to Lock/Wake, Long Press to Switch Off or Restart"
+          }
+          className={`group absolute -right-2 top-40 w-2.5 h-16 rounded-r-md transition-all cursor-pointer shadow-md flex items-center justify-end pr-0.5 ${
+            isHoldingPower
+              ? 'bg-rose-500 ring-2 ring-rose-400 scale-105 shadow-[0_0_15px_rgba(244,63,94,0.8)]'
+              : 'bg-neutral-700 hover:bg-neutral-500 active:scale-95 active:bg-neutral-400'
+          }`}
         >
-          <span className="w-1 h-6 rounded-full bg-neutral-400 group-hover:bg-white" />
+          <span
+            className={`w-1 rounded-full transition-all ${
+              isHoldingPower
+                ? 'h-10 bg-white shadow-sm'
+                : 'h-6 bg-neutral-400 group-hover:bg-white'
+            }`}
+          />
         </button>
+
+        {/* Hardware Camera Control Button (Right edge lower rail - iPhone 16 / iOS 18) */}
+        <div className="absolute -right-3 top-[420px] z-30 flex items-center group">
+          <button
+            id="hardware-camera-control-button"
+            onPointerDown={handleCameraControlPointerDown}
+            onPointerMove={handleCameraControlPointerMove}
+            onPointerUp={handleCameraControlPointerUp}
+            onPointerCancel={handleCameraControlPointerUp}
+            onDoubleClick={handleCameraControlDoubleClick}
+            title="Camera Control Key (Click: Shutter / Launch | Light Press / Double-Click: Tools | Slide: Zoom / Scrub)"
+            className={`w-3.5 h-16 rounded-r-lg transition-all cursor-pointer shadow-lg flex flex-col items-center justify-center gap-1 border-y border-r border-white/20 select-none ${
+              isCameraControlInteracting
+                ? 'bg-amber-400 ring-2 ring-amber-300 scale-105 shadow-[0_0_18px_rgba(251,191,36,0.9)]'
+                : state.cameraControl?.isOpen
+                ? 'bg-amber-600/90 ring-1 ring-amber-400'
+                : 'bg-neutral-800 hover:bg-neutral-700 active:scale-95'
+            }`}
+          >
+            {/* Sapphire crystal capacitive tactile strip */}
+            <span
+              className={`w-1 rounded-full transition-all ${
+                isCameraControlInteracting
+                  ? 'h-7 bg-black'
+                  : state.cameraControl?.isOpen
+                  ? 'h-6 bg-amber-200'
+                  : 'h-4 bg-neutral-400 group-hover:bg-amber-300'
+              }`}
+            />
+            <span
+              className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                isCameraControlInteracting
+                  ? 'bg-black'
+                  : state.cameraControl?.isOpen
+                  ? 'bg-amber-200'
+                  : 'bg-neutral-500 group-hover:bg-amber-300'
+              }`}
+            />
+          </button>
+
+          {/* Quick tooltip on hover */}
+          <div className="absolute left-full ml-2 px-2.5 py-1 rounded bg-black/95 text-[9px] text-amber-300 font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity shadow-xl border border-amber-500/40 z-50">
+            Camera Control: Click (Snap) • Slide (Zoom)
+          </div>
+        </div>
 
         {/* Screen Display Area */}
         <div className="relative w-full h-full bg-black rounded-[46px] overflow-hidden flex flex-col justify-between border border-black shadow-inner">
+          {/* Active Boot Screen Animation */}
+          {isBooting && (
+            <BootScreen onBootComplete={handleBootComplete} isRestart={isRestarting} />
+          )}
+
+          {/* Screen Off / Powered Down Black Display */}
+          {state.isScreenOff && !isBooting && (
+            <div
+              id="screen-powered-off"
+              onClick={handleTurnOn}
+              title="Click or hold Power button to turn on iPhone"
+              className="absolute inset-0 z-50 bg-black flex flex-col items-center justify-center p-6 text-center select-none cursor-pointer"
+            >
+              <div className="w-14 h-14 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-neutral-600 mb-3 hover:text-white hover:border-neutral-700 transition-all shadow-lg">
+                <Power className="w-6 h-6" />
+              </div>
+              <p className="text-sm font-semibold text-neutral-400">iPhone is Powered Off</p>
+              <p className="text-[11px] text-neutral-600 mt-1 max-w-[210px] leading-relaxed">
+                Click or long press the Side Power button to turn on
+              </p>
+            </div>
+          )}
+
+          {/* Long Press Power Active Feedback HUD */}
+          {isHoldingPower && !state.isScreenOff && (
+            <div className="absolute top-14 left-1/2 -translate-x-1/2 z-50 px-3.5 py-1.5 rounded-full bg-black/95 border border-white/20 text-white text-[11px] font-medium shadow-2xl flex items-center gap-2 backdrop-blur-md animate-fade-in pointer-events-none">
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+              <span>Holding Power... ({holdProgress}%)</span>
+            </div>
+          )}
+
+          {/* iOS Power Off & Restart Slider Menu Overlay */}
+          <PowerMenuOverlay
+            isOpen={isPowerMenuOpen}
+            onPowerOff={handlePowerOff}
+            onRestart={handleRestart}
+            onCancel={() => setIsPowerMenuOpen(false)}
+          />
+
+          {/* iOS 18 Camera Control Scrubber & Tool Selector Overlay */}
+          {state.cameraControl?.isOpen && !state.isScreenOff && (
+            <CameraControlOverlay
+              state={state}
+              onUpdateState={onUpdateState}
+              onClose={() =>
+                onUpdateState((s) => ({
+                  ...s,
+                  cameraControl: { ...s.cameraControl, isOpen: false }
+                }))
+              }
+              onCapturePhoto={captureCameraPhoto}
+            />
+          )}
+
           {/* Interactive iOS Volume HUD Pill */}
           <VolumeHUD
             volume={state.volume}
@@ -641,6 +1159,7 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
                 onUpdateState={onUpdateState}
                 onClose={() => onUpdateState((s) => ({ ...s, isControlCenterOpen: false }))}
                 onTriggerGesture={onTriggerGesture}
+                onOpenPowerMenu={() => setIsPowerMenuOpen(true)}
               />
             )}
 
@@ -761,18 +1280,62 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
             <span>Vol +</span>
           </button>
 
-          {/* Side Power Lock */}
+          {/* Camera Control (iPhone 16 / iOS 18) */}
           <button
-            onClick={handlePowerButton}
-            title="Side Power Button (Lock / Wake)"
-            className={`flex flex-col items-center justify-center p-1.5 rounded-xl active:scale-95 text-[10px] font-medium transition-all ${
-              state.isLocked
+            id="toolbar-camera-control"
+            onClick={handleCameraControlClick}
+            onContextMenu={(e) => {
+              e.preventDefault();
+              handleCameraControlLightPress();
+            }}
+            title="Camera Control: Left-Click to Launch / Shutter | Right-Click to Open Tools HUD"
+            className={`flex flex-col items-center justify-center p-1.5 rounded-xl active:scale-95 text-[10px] font-medium transition-all relative ${
+              state.currentApp === 'camera'
+                ? state.cameraControl?.isOpen
+                  ? 'bg-amber-950/90 border border-amber-400 text-amber-200 ring-1 ring-amber-400/60'
+                  : 'bg-neutral-800 border border-amber-400/50 text-amber-300'
+                : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200'
+            }`}
+          >
+            <Camera className="w-3.5 h-3.5 mb-0.5 text-amber-400" />
+            <span>Camera Ctrl</span>
+            <span className="text-[7.5px] text-amber-400/80 opacity-80 leading-none mt-0.5">
+              {state.currentApp === 'camera' ? 'Snap / Tools' : 'Launch'}
+            </span>
+          </button>
+
+          {/* Side Power Lock & Long Press */}
+          <button
+            id="toolbar-power-button"
+            onPointerDown={startPowerHold}
+            onPointerUp={endPowerHold}
+            onPointerLeave={cancelPowerHold}
+            title={
+              state.isScreenOff
+                ? "Power Button: Click or hold to Turn On"
+                : "Side Power Button: Click to Lock/Wake, Long Press to Switch Off or Restart"
+            }
+            className={`flex flex-col items-center justify-center p-1.5 rounded-xl active:scale-95 text-[10px] font-medium transition-all relative ${
+              isHoldingPower
+                ? 'bg-rose-900/90 border border-rose-500 text-white scale-95 ring-2 ring-rose-500/50'
+                : state.isScreenOff
+                ? 'bg-emerald-950/80 border border-emerald-600/50 text-emerald-300'
+                : state.isLocked
                 ? 'bg-amber-950/80 border border-amber-600/50 text-amber-300'
                 : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-200'
             }`}
           >
-            <Power className="w-3.5 h-3.5 mb-0.5 text-neutral-300" />
-            <span>{state.isLocked ? 'Wake' : 'Lock'}</span>
+            <Power className={`w-3.5 h-3.5 mb-0.5 ${state.isScreenOff ? 'text-emerald-400' : 'text-neutral-300'}`} />
+            <span>
+              {isHoldingPower
+                ? `${holdProgress}%`
+                : state.isScreenOff
+                ? 'Turn On'
+                : state.isLocked
+                ? 'Wake'
+                : 'Lock'}
+            </span>
+            <span className="text-[7.5px] text-neutral-400 opacity-80 leading-none mt-0.5">Hold: Off</span>
           </button>
         </div>
       </div>
@@ -802,6 +1365,28 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
           className="px-2.5 py-1 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-[11px] font-medium transition-colors"
         >
           Spotlight Search
+        </button>
+        <button
+          id="quick-camera-control-button"
+          onClick={handleCameraControlLightPress}
+          className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors flex items-center gap-1 border ${
+            state.cameraControl?.isOpen
+              ? 'bg-amber-950/80 border-amber-500/60 text-amber-300 shadow-sm'
+              : 'bg-neutral-800 hover:bg-neutral-700 border-neutral-700 text-neutral-200'
+          }`}
+          title="Toggle iOS 18 Camera Control HUD & Tools"
+        >
+          <SlidersHorizontal className="w-3 h-3 text-amber-400" />
+          <span>Camera Control</span>
+        </button>
+        <button
+          id="quick-power-menu-button"
+          onClick={() => setIsPowerMenuOpen(true)}
+          className="px-2.5 py-1 rounded-lg bg-rose-950/60 hover:bg-rose-900 border border-rose-800/40 text-rose-300 text-[11px] font-medium transition-colors flex items-center gap-1"
+          title="Open Power Options (Switch Off & Restart)"
+        >
+          <Power className="w-3 h-3 text-rose-400" />
+          <span>Power Menu</span>
         </button>
       </div>
     </div>

@@ -540,4 +540,150 @@ export function playSiriDismissSound() {
   osc.stop(now + 0.18);
 }
 
+// iOS Power Down Sound (Soft descending harmonic sequence)
+export function playPowerDownSound() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+
+  const freqs = [520, 390, 260, 180];
+  freqs.forEach((freq, idx) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const start = now + idx * 0.08;
+    const dur = 0.22;
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, start);
+    osc.frequency.exponentialRampToValueAtTime(freq * 0.85, start + dur);
+
+    gain.gain.setValueAtTime(0.12, start);
+    gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + dur);
+  });
+}
+
+// iOS / Apple Boot Chime (Rich warm major chord with smooth harmonic decay)
+export function playBootChimeSound() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+
+  // F# major chord / Apple chime frequencies: F#3 (185Hz), C#4 (277Hz), F#4 (370Hz), A#4 (466Hz), C#5 (554Hz)
+  const chord = [
+    { freq: 185.0, gain: 0.18, decay: 1.8 },
+    { freq: 277.18, gain: 0.15, decay: 1.6 },
+    { freq: 369.99, gain: 0.14, decay: 1.5 },
+    { freq: 466.16, gain: 0.12, decay: 1.4 },
+    { freq: 554.37, gain: 0.10, decay: 1.3 },
+  ];
+
+  chord.forEach(({ freq, gain: targetGain, decay }) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(freq, now);
+
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.linearRampToValueAtTime(targetGain, now + 0.04);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + decay);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + decay);
+  });
+}
+
+// iOS Slider Drag Haptic Tick
+export function playPowerSliderHaptic() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(1400, now);
+  osc.frequency.exponentialRampToValueAtTime(600, now + 0.015);
+
+  gain.gain.setValueAtTime(0.05, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.015);
+}
+
+// iOS 18 Camera Control Mechanical Click
+export function playCameraControlClick() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(800, now);
+  osc.frequency.exponentialRampToValueAtTime(120, now + 0.025);
+
+  gain.gain.setValueAtTime(0.3, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.025);
+}
+
+// iOS 18 Camera Control Light Press / Haptic Touch
+export function playCameraControlLightPress() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(320, now);
+  osc.frequency.exponentialRampToValueAtTime(180, now + 0.035);
+
+  gain.gain.setValueAtTime(0.18, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.035);
+}
+
+// iOS 18 Camera Control Scrub / Dial Tick (delicate high frequency haptic)
+export function playCameraControlScrubTick() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(1900, now);
+  osc.frequency.exponentialRampToValueAtTime(1100, now + 0.008);
+
+  gain.gain.setValueAtTime(0.04, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.008);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.008);
+}
+
+
+
 

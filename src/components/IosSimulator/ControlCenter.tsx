@@ -17,7 +17,8 @@ import {
   Timer,
   Camera,
   Play,
-  Pause
+  Pause,
+  Power
 } from 'lucide-react';
 import { SimulatorState } from '../../types';
 import { startMusicSynthesis, stopMusicSynthesis, playVolumeStepSound } from '../../utils/audioUtils';
@@ -27,13 +28,15 @@ interface ControlCenterProps {
   onUpdateState: (updater: (prev: SimulatorState) => SimulatorState) => void;
   onClose: () => void;
   onTriggerGesture?: (gesture: string) => void;
+  onOpenPowerMenu?: () => void;
 }
 
 export const ControlCenter: React.FC<ControlCenterProps> = ({
   state,
   onUpdateState,
   onClose,
-  onTriggerGesture
+  onTriggerGesture,
+  onOpenPowerMenu
 }) => {
   const toggleWifi = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -78,6 +81,24 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
       className="absolute inset-0 bg-black/45 backdrop-blur-2xl z-40 p-4 pt-12 flex flex-col justify-between select-none text-white font-sans animate-fade-in"
     >
       <div className="space-y-3" onClick={(e) => e.stopPropagation()}>
+        {/* iOS 18 Top Utility Bar with Power Button */}
+        {onOpenPowerMenu && (
+          <div className="flex items-center justify-between px-1 -mb-1">
+            <span className="text-[10px] font-semibold tracking-wider text-white/50 uppercase">Control Center</span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose();
+                onOpenPowerMenu();
+              }}
+              title="Open Power Menu (Switch Off & Restart)"
+              className="w-7 h-7 rounded-full bg-neutral-800/90 hover:bg-rose-950/80 border border-white/10 hover:border-rose-500/50 flex items-center justify-center text-white/70 hover:text-rose-400 transition-all shadow-md active:scale-90"
+            >
+              <Power className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+
         {/* Top Control Grid (2x2 major modules) */}
         <div className="grid grid-cols-2 gap-3">
           {/* Connectivity 2x2 Square */}
