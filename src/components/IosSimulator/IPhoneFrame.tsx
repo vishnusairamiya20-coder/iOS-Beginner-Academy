@@ -46,6 +46,7 @@ import { FounderApp } from './apps/FounderApp';
 import { MusicApp } from './apps/MusicApp';
 import { YouTubeApp } from './apps/YouTubeApp';
 import { PinterestApp } from './apps/PinterestApp';
+import { WhatsAppApp } from './apps/WhatsAppApp';
 import { WallpaperBackground } from './WallpaperBackground';
 import { PowerMenuOverlay } from './PowerMenuOverlay';
 import { BootScreen } from './BootScreen';
@@ -1045,6 +1046,15 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
 
                 {state.currentApp === 'youtube' && (
                   <YouTubeApp
+                    state={state}
+                    onUpdateState={onUpdateState}
+                    onOpenApp={openApp}
+                    onClose={goHome}
+                  />
+                )}
+
+                {state.currentApp === 'whatsapp' && (
+                  <WhatsAppApp
                     state={state}
                     onUpdateState={onUpdateState}
                     onOpenApp={openApp}

@@ -134,8 +134,16 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
     title: 'Anti-Hero',
     artist: 'Taylor Swift'
   },
-  recentApps: ['settings', 'messages', 'camera', 'photos', 'safari', 'phone', 'appstore'],
+  recentApps: ['settings', 'whatsapp', 'messages', 'camera', 'photos', 'safari', 'phone', 'appstore'],
   notifications: [
+    {
+      id: 'n0',
+      app: 'WhatsApp',
+      title: 'Sarah (Design Lead)',
+      message: 'Hey Vishnu! Did you check the new iOS 18 simulator?',
+      time: '10:14 AM',
+      unread: true
+    },
     {
       id: 'n1',
       app: 'Messages',

@@ -27,7 +27,8 @@ export const SpotlightSearch: React.FC<SpotlightSearchProps> = ({
     { id: 'calculator', name: 'Calculator', icon: '🔢', category: 'Utilities' },
     { id: 'clock', name: 'Clock', icon: '⏰', category: 'Utilities' },
     { id: 'music', name: 'Music', icon: '🎵', category: 'Entertainment' },
-    { id: 'youtube', name: 'YouTube', icon: '▶️', category: 'Entertainment' }
+    { id: 'youtube', name: 'YouTube', icon: '▶️', category: 'Entertainment' },
+    { id: 'whatsapp', name: 'WhatsApp', icon: '💬', category: 'Social & Communication' }
   ];
 
   const filteredApps = query.trim()

@@ -34,12 +34,14 @@ export const AppSwitcher: React.FC<AppSwitcherProps> = ({
     health: { name: 'Health', icon: '❤️' },
     music: { name: 'Music', icon: '🎵' },
     youtube: { name: 'YouTube', icon: '▶️' },
-    pinterest: { name: 'Pinterest', icon: '📌' }
+    pinterest: { name: 'Pinterest', icon: '📌' },
+    whatsapp: { name: 'WhatsApp', icon: '💬' }
   };
 
-  const appsInSwitcher = state.recentApps.length > 0
+  const rawApps = state.recentApps.length > 0
     ? state.recentApps
     : (['settings', 'messages', 'camera', 'weather'] as IosAppId[]);
+  const appsInSwitcher: IosAppId[] = Array.from(new Set(rawApps));
 
   return (
     <div
