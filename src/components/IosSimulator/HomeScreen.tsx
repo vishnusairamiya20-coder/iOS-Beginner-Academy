@@ -53,8 +53,18 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     {
       id: 'chrome',
       name: 'Chrome',
-      iconBg: 'bg-gradient-to-tr from-red-500 via-yellow-500 to-blue-500',
-      iconElement: <span className="text-xl font-black text-white">🌐</span>
+      iconBg: 'bg-white shadow-md border border-black/5',
+      iconElement: (
+        <div className="w-full h-full flex items-center justify-center p-1">
+          <svg viewBox="0 0 48 48" className="w-8 h-8 drop-shadow-sm">
+            <path fill="#4CAF50" d="M24 44c11.046 0 20-8.954 20-20h-8.001A12 12 0 0 1 24 36c-5.836 0-10.7-4.17-11.758-9.713L4.858 31.785C8.423 39.062 15.653 44 24 44z"/>
+            <path fill="#FFC107" d="M44 24c0-2.457-.45-4.805-1.259-6.98l-7.384 12.787A11.968 11.968 0 0 1 24 36v8c11.046 0 20-8.954 20-20z"/>
+            <path fill="#FF3D00" d="M24 4c8.347 0 15.577 4.938 19.142 12.215l-7.384 12.787A12.01 12.01 0 0 0 24 12c-5.836 0-10.7 4.17-11.758 9.713L4.858 16.215C8.423 8.938 15.653 4 24 4z"/>
+            <circle fill="#FFFFFF" cx="24" cy="24" r="11"/>
+            <circle fill="#1A73E8" cx="24" cy="24" r="8"/>
+          </svg>
+        </div>
+      )
     },
     {
       id: 'founder',

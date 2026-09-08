@@ -1001,7 +1001,12 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
                 )}
 
                 {state.currentApp === 'chrome' && (
-                  <ChromeApp state={state} />
+                  <ChromeApp
+                    state={state}
+                    onUpdateState={onUpdateState}
+                    onOpenApp={openApp}
+                    onClose={goHome}
+                  />
                 )}
 
                 {state.currentApp === 'photos' && (
