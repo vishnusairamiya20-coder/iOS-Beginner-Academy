@@ -90,6 +90,22 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       )
     },
     {
+      id: 'paytm',
+      name: 'Paytm',
+      badge: '₹',
+      iconBg: 'bg-[#002E6E] shadow-md border border-white/10',
+      iconElement: (
+        <div className="w-full h-full flex flex-col items-center justify-center p-1">
+          <span className="text-[14px] font-black tracking-tighter leading-none text-white">
+            Pay<span className="text-[#00BAF2]">tm</span>
+          </span>
+          <span className="text-[7px] font-extrabold text-[#00BAF2] tracking-wider uppercase mt-0.5">
+            UPI
+          </span>
+        </div>
+      )
+    },
+    {
       id: 'pinterest',
       name: 'Pinterest',
       badge: '●',

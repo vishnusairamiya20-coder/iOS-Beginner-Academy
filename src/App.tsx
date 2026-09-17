@@ -124,7 +124,7 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
     { id: 'p8', emoji: '🌃', title: 'Tokyo Skyline at Night', date: 'Aug 10, 10:15 PM', isFavorite: true }
   ],
 
-  installedApps: ['instagram', 'whatsapp', 'youtube', 'pinterest', 'tiktok', 'spotify', 'netflix', 'chatgpt'],
+  installedApps: ['instagram', 'whatsapp', 'youtube', 'pinterest', 'tiktok', 'spotify', 'netflix', 'chatgpt', 'paytm'],
 
   dynamicIslandState: 'idle',
   timerSecondsRemaining: 0,
@@ -134,7 +134,7 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
     title: 'Anti-Hero',
     artist: 'Taylor Swift'
   },
-  recentApps: ['settings', 'whatsapp', 'messages', 'camera', 'photos', 'safari', 'phone', 'appstore'],
+  recentApps: ['settings', 'paytm', 'whatsapp', 'messages', 'camera', 'photos', 'safari', 'phone', 'appstore'],
   notifications: [
     {
       id: 'n0',

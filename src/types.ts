@@ -18,7 +18,8 @@ export type IosAppId =
   | 'music'
   | 'youtube'
   | 'pinterest'
-  | 'whatsapp';
+  | 'whatsapp'
+  | 'paytm';
 
 export interface AppIconInfo {
   id: IosAppId;

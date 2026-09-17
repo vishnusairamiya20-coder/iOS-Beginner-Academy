@@ -242,6 +242,21 @@ const STORE_CATALOG: StoreApp[] = [
     sizeMB: 310,
     description: 'Roblox is the ultimate virtual universe that lets you create, share experiences with friends, and be anything.',
     screenshots: ['Millions of Experiences', 'Cross-Platform Play', 'Avatar Customizer']
+  },
+  {
+    id: 'paytm',
+    name: 'Paytm: Secure UPI Payments',
+    subtitle: 'Recharge, Bill Pay & Wallet',
+    category: 'Productivity',
+    icon: '💳',
+    iconBg: 'from-[#002E6E] via-[#003882] to-[#00BAF2]',
+    rating: 4.8,
+    reviewsCount: '32M',
+    developer: 'One97 Communications Ltd.',
+    ageRating: '4+',
+    sizeMB: 112,
+    description: 'India\'s leading UPI payment & financial services app. Scan any QR, send money directly from bank accounts, recharge prepaid mobiles, pay electricity bills, and enjoy the Paytm Soundbox with instant cashback rewards.',
+    screenshots: ['Scan & Pay Any UPI QR', 'Instant Bank to Bank Transfer', 'Paytm Soundbox Voice Alerts', 'Cashback Scratch Cards']
   }
 ];
 
@@ -447,7 +462,11 @@ export const AppStoreApp: React.FC<AppStoreAppProps> = ({ state, onOpenApp, onUp
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (!installedAppIds.includes(app.id)) handleInstall(app);
+                        if (!installedAppIds.includes(app.id)) {
+                          handleInstall(app);
+                        } else if (onOpenApp) {
+                          onOpenApp(app.id as any);
+                        }
                       }}
                       className={`px-4 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
                         installedAppIds.includes(app.id)
@@ -494,7 +513,11 @@ export const AppStoreApp: React.FC<AppStoreAppProps> = ({ state, onOpenApp, onUp
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (!installedAppIds.includes(app.id)) handleInstall(app);
+                    if (!installedAppIds.includes(app.id)) {
+                      handleInstall(app);
+                    } else if (onOpenApp) {
+                      onOpenApp(app.id as any);
+                    }
                   }}
                   className="px-4 py-1 rounded-full bg-blue-500 text-white text-xs font-bold"
                 >
@@ -577,7 +600,11 @@ export const AppStoreApp: React.FC<AppStoreAppProps> = ({ state, onOpenApp, onUp
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (!installedAppIds.includes(app.id)) handleInstall(app);
+                      if (!installedAppIds.includes(app.id)) {
+                        handleInstall(app);
+                      } else if (onOpenApp) {
+                        onOpenApp(app.id as any);
+                      }
                     }}
                     className={`px-4 py-1 rounded-full text-xs font-bold cursor-pointer ${
                       installedAppIds.includes(app.id) ? 'bg-neutral-200 dark:bg-neutral-800 text-blue-500' : 'bg-blue-500 text-white'
