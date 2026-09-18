@@ -48,6 +48,8 @@ import { YouTubeApp } from './apps/YouTubeApp';
 import { PinterestApp } from './apps/PinterestApp';
 import { WhatsAppApp } from './apps/WhatsAppApp';
 import { PaytmApp } from './apps/PaytmApp';
+import { AmazonApp } from './apps/AmazonApp';
+import { GeminiApp } from './apps/GeminiApp';
 import { WallpaperBackground } from './WallpaperBackground';
 import { PowerMenuOverlay } from './PowerMenuOverlay';
 import { BootScreen } from './BootScreen';
@@ -1070,6 +1072,24 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
 
                 {state.currentApp === 'paytm' && (
                   <PaytmApp
+                    state={state}
+                    onUpdateState={onUpdateState}
+                    onOpenApp={openApp}
+                    onClose={goHome}
+                  />
+                )}
+
+                {state.currentApp === 'amazon' && (
+                  <AmazonApp
+                    state={state}
+                    onUpdateState={onUpdateState}
+                    onOpenApp={openApp}
+                    onClose={goHome}
+                  />
+                )}
+
+                {state.currentApp === 'gemini' && (
+                  <GeminiApp
                     state={state}
                     onUpdateState={onUpdateState}
                     onOpenApp={openApp}

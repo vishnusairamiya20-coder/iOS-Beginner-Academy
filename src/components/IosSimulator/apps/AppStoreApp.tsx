@@ -257,6 +257,36 @@ const STORE_CATALOG: StoreApp[] = [
     sizeMB: 112,
     description: 'India\'s leading UPI payment & financial services app. Scan any QR, send money directly from bank accounts, recharge prepaid mobiles, pay electricity bills, and enjoy the Paytm Soundbox with instant cashback rewards.',
     screenshots: ['Scan & Pay Any UPI QR', 'Instant Bank to Bank Transfer', 'Paytm Soundbox Voice Alerts', 'Cashback Scratch Cards']
+  },
+  {
+    id: 'amazon',
+    name: 'Amazon Shopping',
+    subtitle: 'Fast Delivery & Daily Deals',
+    category: 'Productivity',
+    icon: '📦',
+    iconBg: 'from-[#131921] via-[#232f3e] to-[#febd69]',
+    rating: 4.9,
+    reviewsCount: '84M',
+    developer: 'Amazon Mobile LLC',
+    ageRating: '4+',
+    sizeMB: 146,
+    description: 'Browse, search, get product details, read reviews and purchase millions of products with Amazon. Enjoy Prime fast free delivery, live package tracking, 1-Click checkout, and lightning discounts.',
+    screenshots: ['Prime 1-Day Free Delivery', 'Real-Time Order Tracking', 'Instant 1-Click Buy Now', 'Exclusive Prime Big Deals']
+  },
+  {
+    id: 'gemini',
+    name: 'Google Gemini',
+    subtitle: 'Your AI Assistant on iOS',
+    category: 'Productivity',
+    icon: '✦',
+    iconBg: 'from-[#4285F4] via-[#9B51E0] to-[#EA4335]',
+    rating: 4.9,
+    reviewsCount: '48M',
+    developer: 'Google LLC',
+    ageRating: '12+',
+    sizeMB: 94,
+    description: 'Direct access to Google’s best AI models on your iPhone. Chat to supercharge your ideas, write, learn, brainstorm, code, analyze photos, and talk with Gemini Live.',
+    screenshots: ['Gemini Live Realtime Voice', 'Multimodal Vision & Photo OCR', 'Fast Coding & Math STEM Solver', 'Personalized Learning & Writing']
   }
 ];
 

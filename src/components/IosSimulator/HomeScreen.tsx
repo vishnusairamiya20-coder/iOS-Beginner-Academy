@@ -106,6 +106,62 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       )
     },
     {
+      id: 'amazon',
+      name: 'Amazon',
+      badge: 3,
+      iconBg: 'bg-white shadow-md border border-black/10',
+      iconElement: (
+        <div className="w-full h-full flex flex-col items-center justify-center p-1 relative overflow-hidden">
+          <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-6 h-3 bg-[#00A8E1] rounded-sm opacity-90" />
+          <div className="flex flex-col items-center mt-1">
+            <span className="text-[18px] font-black text-[#131921] tracking-tighter leading-none">
+              a
+            </span>
+            <svg className="w-6 h-2 -mt-0.5" viewBox="0 0 40 16" fill="none">
+              <path
+                d="M4 4 C 16 14, 28 14, 38 5"
+                stroke="#ff9900"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+              />
+              <path
+                d="M37 2 C 39 5, 38 8, 35 10"
+                stroke="#ff9900"
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+        </div>
+      )
+    },
+    {
+      id: 'gemini',
+      name: 'Gemini',
+      badge: '✦',
+      iconBg: 'bg-gradient-to-b from-[#18191b] to-[#121315] shadow-md border border-white/15',
+      iconElement: (
+        <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
+          {/* Subtle ambient glow behind star */}
+          <div className="absolute w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500/40 via-purple-500/30 to-pink-500/40 blur-sm pointer-events-none" />
+          {/* 4-pointed Gemini Sparkle Star SVG */}
+          <svg className="w-7 h-7 relative z-10 filter drop-shadow-sm" viewBox="0 0 100 100" fill="none">
+            <defs>
+              <linearGradient id="geminiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#4285F4" />
+                <stop offset="50%" stopColor="#9B51E0" />
+                <stop offset="100%" stopColor="#EA4335" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M50 0 C 50 27.6, 72.4 50, 100 50 C 72.4 50, 50 72.4, 50 100 C 50 72.4, 27.6 50, 0 50 C 27.6 50, 50 27.6, 50 0 Z"
+              fill="url(#geminiGrad)"
+            />
+          </svg>
+        </div>
+      )
+    },
+    {
       id: 'pinterest',
       name: 'Pinterest',
       badge: '●',

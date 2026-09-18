@@ -30,7 +30,9 @@ export const SpotlightSearch: React.FC<SpotlightSearchProps> = ({
     { id: 'music', name: 'Music', icon: '🎵', category: 'Entertainment' },
     { id: 'youtube', name: 'YouTube', icon: '▶️', category: 'Entertainment' },
     { id: 'whatsapp', name: 'WhatsApp', icon: '💬', category: 'Social & Communication' },
-    { id: 'paytm', name: 'Paytm', icon: '💳', category: 'Finance & UPI' }
+    { id: 'paytm', name: 'Paytm', icon: '💳', category: 'Finance & UPI' },
+    { id: 'amazon', name: 'Amazon Shopping', icon: '📦', category: 'Shopping' },
+    { id: 'gemini', name: 'Google Gemini', icon: '✦', category: 'Productivity & AI' }
   ];
 
   const filteredApps = query.trim()

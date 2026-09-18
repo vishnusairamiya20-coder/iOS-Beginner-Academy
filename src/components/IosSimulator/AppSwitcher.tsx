@@ -36,7 +36,9 @@ export const AppSwitcher: React.FC<AppSwitcherProps> = ({
     youtube: { name: 'YouTube', icon: '▶️' },
     pinterest: { name: 'Pinterest', icon: '📌' },
     whatsapp: { name: 'WhatsApp', icon: '💬' },
-    paytm: { name: 'Paytm', icon: '💳' }
+    paytm: { name: 'Paytm', icon: '💳' },
+    amazon: { name: 'Amazon', icon: '📦' },
+    gemini: { name: 'Gemini', icon: '✦' }
   };
 
   const rawApps = state.recentApps.length > 0
