@@ -1405,7 +1405,7 @@ export const WhatsAppApp: React.FC<WhatsAppAppProps> = ({
                 {/* Contact Card */}
                 <button
                   onClick={() => {
-                    handleSendMessage('👤 Contact Card: Vishnu Sai Ramiya & Rohan R. Potdar');
+                    handleSendMessage('👤 Contact Card: Vishnu Sai Ramiya');
                     setShowAttachmentMenu(false);
                   }}
                   className="flex flex-col items-center gap-1.5 group cursor-pointer"

@@ -168,17 +168,17 @@ export const PROMPT_RECIPES: PromptRecipe[] = [
 ];
 
 export const VISHNU_FULL_BIOGRAPHY = `
-# Developer Profile & Personal Biography: Vishnu Sai Ramiya & Rohan R. Potdar
-**Class 9 Scholars, Technology Innovators, Mathematical Thinkers & AI Creators**
-*Published: August 2026 | System & Platform Architects*
+# Developer Profile & Personal Biography: Vishnu Sai Ramiya
+**Class 9 Scholar, Technology Innovator, Mathematical Thinker & AI Creator**
+*Published: August 2026 | System & Platform Architect*
 
 ---
 
 ## 1. Introduction & Personal Overview
 
-We are **Vishnu Sai Ramiya** and **Rohan R. Potdar**, enthusiastic, curious, and forward-thinking Class 9 students with a deep passion for technology, artificial intelligence, science, and problem-solving. Living in an era defined by rapid technological advancements, we view learning not just as a classroom requirement, but as an exciting journey of discovery. Every day presents an opportunity to explore new concepts, test ideas, and build digital tools that can inspire or help others.
+I am **Vishnu Sai Ramiya**, an enthusiastic, curious, and forward-thinking Class 9 student with a deep passion for technology, artificial intelligence, science, and problem-solving. Living in an era defined by rapid technological advancements, I view learning not just as a classroom requirement, but as an exciting journey of discovery. Every day presents an opportunity to explore new concepts, test ideas, and build digital tools that can inspire or help others.
 
-As students navigating the foundational years of high school, we balance our core academic curriculum—ranging from mathematics and physical sciences to language arts and social studies—with self-driven exploration into coding, digital design, and AI applications. We firmly believe that age is no barrier to innovation, and being in Class 9 gives us a unique perspective: we have the curiosity of lifelong learners paired with the drive to build real-world skills early.
+As a student navigating the foundational years of high school, I balance my core academic curriculum—ranging from mathematics and physical sciences to language arts and social studies—with self-driven exploration into coding, digital design, and AI applications. I firmly believe that age is no barrier to innovation, and being in Class 9 gives me a unique perspective: I have the curiosity of a lifelong learner paired with the drive to build real-world skills early.
 
 ### Core Competencies & Academic Profile Summary
 
@@ -257,16 +257,16 @@ Long-term, I aspire to pursue higher studies in computer science and technology,
 
 ## 7. Summary Statement
 
-> "We are Vishnu Sai Ramiya and Rohan R. Potdar—dedicated students, creative builders, and aspiring technology innovators. Welcome to our app project!"
+> "I am Vishnu Sai Ramiya—dedicated student, creative builder, and aspiring technology innovator. Welcome to my app project!"
 
-Thank you for visiting our app page and supporting our learning journey as Class 9 student builders. Your feedback, interaction, and encouragement mean the world to us as we continue to explore, learn, and create!
+Thank you for visiting my app page and supporting my learning journey as a Class 9 student builder. Your feedback, interaction, and encouragement mean the world to me as I continue to explore, learn, and create!
 
 ---
 
 ### Contact & Creator Verification
-- **Creators**: Vishnu Sai Ramiya & Rohan R. Potdar
-- **Official Account**: \`vishnu.rohan.builders@gmail.com\`
-- **Apple Account ID**: \`vishnu.rohan@icloud.com\`
-- **Role**: Technology Innovators, Student Builders & AI Creators
-- **Current Standing**: Class 9 Students & Co-Builders
+- **Creator**: Vishnu Sai Ramiya
+- **Official Account**: \`vishnusairamiya20@gmail.com\`
+- **Apple Account ID**: \`vishnusairamiya@icloud.com\`
+- **Role**: Technology Innovator, Student Builder & AI Creator
+- **Current Standing**: Class 9 Student & Builder
 `;
