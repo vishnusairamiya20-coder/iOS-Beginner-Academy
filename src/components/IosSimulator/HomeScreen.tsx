@@ -328,7 +328,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             </div>
             <div>
               <p className="text-2xl font-bold">{liveClock.dayOfMonth}</p>
-              <p className="text-[10px] text-neutral-300">iPhone Battery {state.batteryLevel}%</p>
+              <p className="text-[10px] text-neutral-300">iOS 27 • Battery {state.batteryLevel}%</p>
             </div>
             <div className="w-full bg-neutral-700 h-1 rounded-full overflow-hidden">
               <div

@@ -85,6 +85,11 @@ export interface SimulatorState {
   isSilentMode: boolean;
   isSiriOpen: boolean;
 
+  // Operating System & Version
+  osVersion: string; // e.g. 'iOS 27.0'
+  osBuild: string; // e.g. 'Build 27A390 (Quantum Core)'
+  isIos27Installed: boolean;
+
   // iOS 18 / iPhone 16 Camera Control State
   cameraControl: {
     isOpen: boolean;
@@ -151,6 +156,7 @@ export interface SimulatorState {
 
   // Dynamic Island & Media
   dynamicIslandState: DynamicIslandState;
+  dynamicIslandSize?: 'small' | 'standard';
   timerSecondsRemaining: number;
   isTimerRunning: boolean;
   isPlayingMusic: boolean;

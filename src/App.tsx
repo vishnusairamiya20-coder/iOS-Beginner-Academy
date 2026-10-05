@@ -61,6 +61,10 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
   isSilentMode: false,
   isSiriOpen: false,
 
+  osVersion: 'iOS 27.0',
+  osBuild: 'Build 27A390 (Quantum Core)',
+  isIos27Installed: true,
+
   cameraControl: {
     isOpen: false,
     activeTool: 'zoom',
@@ -127,6 +131,7 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
   installedApps: ['instagram', 'whatsapp', 'youtube', 'pinterest', 'tiktok', 'spotify', 'netflix', 'chatgpt', 'paytm', 'amazon', 'gemini'],
 
   dynamicIslandState: 'idle',
+  dynamicIslandSize: 'small',
   timerSecondsRemaining: 0,
   isTimerRunning: false,
   isPlayingMusic: false,
@@ -137,10 +142,18 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
   recentApps: ['gemini', 'amazon', 'paytm', 'settings', 'whatsapp', 'messages', 'camera', 'photos', 'safari', 'phone', 'appstore'],
   notifications: [
     {
+      id: 'n-ios27',
+      app: 'Software Update',
+      title: 'iOS 27.0 Installed Successfully',
+      message: 'Welcome to iOS 27! Enjoy Quantum Dynamic Island, Gemini Neural Engine & Holographic Fluid UI.',
+      time: 'Just now',
+      unread: true
+    },
+    {
       id: 'n0',
       app: 'WhatsApp',
       title: 'Sarah (Design Lead)',
-      message: 'Hey Vishnu! Did you check the new iOS 18 simulator?',
+      message: 'Hey Vishnu! The new iOS 27 Quantum OS build is insanely fast and fluid!',
       time: '10:14 AM',
       unread: true
     },

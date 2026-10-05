@@ -47,8 +47,8 @@ export const Header: React.FC<HeaderProps> = ({
                 <h1 className="text-base font-bold text-neutral-900 dark:text-white tracking-tight">
                   iOS Beginner Academy
                 </h1>
-                <span className="px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold text-[11px] border border-blue-200 dark:border-blue-800/60">
-                  v18.4 Guide
+                <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-blue-500/10 via-indigo-500/15 to-purple-500/15 text-blue-600 dark:text-blue-400 font-bold text-[11px] border border-blue-300 dark:border-blue-700/60 shadow-xs">
+                  iOS 27 Quantum OS
                 </span>
               </div>
               <p className="text-xs text-neutral-500 dark:text-neutral-400">

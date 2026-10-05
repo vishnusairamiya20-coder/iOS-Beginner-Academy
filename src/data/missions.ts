@@ -80,5 +80,15 @@ export const INITIAL_MISSIONS: Mission[] = [
     hint: 'Open Control Center and tap the Dark Mode toggle icon or go to Settings > Display.',
     rewardPoints: 60,
     isCompleted: false
+  },
+  {
+    id: 'mission-ios27-update',
+    title: 'Explore iOS 27 Quantum OS',
+    difficulty: 'Pro Tip',
+    description: 'Open Settings > General > Software Update to inspect your installed iOS 27.0 release and Gemini Neural Core architecture.',
+    requiredGesture: 'open_settings',
+    hint: 'Tap Settings on the Home Screen, go to General > Software Update or About to explore iOS 27 features.',
+    rewardPoints: 100,
+    isCompleted: false
   }
 ];

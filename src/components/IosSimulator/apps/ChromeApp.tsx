@@ -1137,7 +1137,7 @@ export const ChromeApp: React.FC<ChromeAppProps> = ({
                 {[
                   `How does ${activeTab.query || 'this technology'} work?`,
                   `What are the best alternatives to ${activeTab.query || 'this solution'}?`,
-                  `Is ${activeTab.query || 'this feature'} supported on iOS 18?`
+                  `Is ${activeTab.query || 'this feature'} supported on iOS 27?`
                 ].map((q, idx) => (
                   <div
                     key={idx}

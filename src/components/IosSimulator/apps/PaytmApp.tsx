@@ -70,7 +70,7 @@ interface ContactRecipient {
 }
 
 const PRESET_CONTACTS: ContactRecipient[] = [
-  { name: 'Rohan R. Potdar', phone: '+91 98765 43210', upiId: 'rohan.potdar@okaxis', avatarBg: 'bg-indigo-600', recent: true },
+  { name: 'Vikram Sen', phone: '+91 98765 43210', upiId: 'vikram.sen@okaxis', avatarBg: 'bg-indigo-600', recent: true },
   { name: 'Sarah (Design Lead)', phone: '+91 98234 56789', upiId: 'sarah.design@paytm', avatarBg: 'bg-rose-500', recent: true },
   { name: 'Mom', phone: '+91 99887 66554', upiId: 'mom.home@sbi', avatarBg: 'bg-emerald-600', recent: true },
   { name: 'Sharma Kirana Store', phone: '+91 97112 34567', upiId: 'sharmakirana@paytm', avatarBg: 'bg-amber-600', recent: true },
@@ -385,7 +385,7 @@ export const PaytmApp: React.FC<PaytmAppProps> = ({ state, onUpdateState, onOpen
         >
           <div className="flex items-center gap-2">
             <Search className="w-3.5 h-3.5 text-[#00BAF2]" />
-            <span>Search &quot;Pay Rohan&quot;, Mobile, Electricity...</span>
+            <span>Search &quot;Pay Vikram&quot;, Mobile, Electricity...</span>
           </div>
           <span className="text-[10px] text-[#00BAF2] font-semibold">Pay UPI</span>
         </div>

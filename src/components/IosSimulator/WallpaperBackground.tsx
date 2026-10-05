@@ -199,7 +199,113 @@ export const WallpaperBackground: React.FC<WallpaperBackgroundProps> = ({
     );
   }
 
-  // 4. NEON
+  // 3. IOS 27 QUANTUM HORIZON (Official iOS 27 Flagship Wallpaper)
+  if (wallpaper === 'ios27_quantum' || wallpaper === 'ios27' || wallpaper === 'quantum') {
+    return (
+      <div className={`absolute inset-0 overflow-hidden select-none pointer-events-none ${className}`}>
+        {/* Dynamic deep cosmic backdrop with quantum light fields */}
+        <div
+          className="absolute inset-0 transition-all duration-700"
+          style={{
+            backgroundImage: isDarkMode
+              ? 'radial-gradient(circle at 50% 15%, #4f46e5 0%, #1e1b4b 30%, #030712 75%)'
+              : 'radial-gradient(circle at 50% 20%, #6366f1 0%, #3b82f6 30%, #0f172a 80%)'
+          }}
+        />
+
+        {/* Shifting quantum energy waveforms */}
+        <div className="absolute -top-20 -left-20 w-[150%] h-[85%] rounded-full bg-gradient-to-tr from-cyan-500/35 via-fuchsia-500/25 to-transparent blur-3xl transform rotate-12 animate-pulse" />
+        <div className="absolute top-1/3 -right-24 w-[130%] h-[75%] rounded-full bg-gradient-to-bl from-violet-600/30 via-indigo-500/25 to-transparent blur-3xl transform -rotate-12" />
+        <div className="absolute bottom-[-10%] left-[-20%] w-[140%] h-[60%] rounded-full bg-gradient-to-t from-emerald-500/20 via-sky-600/20 to-transparent blur-2xl" />
+
+        {/* Quantum neural circuit nodes and star particles */}
+        <div className="absolute inset-0 opacity-70">
+          <div className="absolute top-20 left-16 w-1.5 h-1.5 bg-cyan-300 rounded-full shadow-[0_0_8px_#22d3ee] animate-ping" />
+          <div className="absolute top-36 right-20 w-1 h-1 bg-fuchsia-300 rounded-full shadow-[0_0_6px_#e879f9]" />
+          <div className="absolute top-64 left-24 w-1.5 h-1.5 bg-violet-200 rounded-full shadow-[0_0_10px_#a78bfa] animate-pulse" />
+          <div className="absolute bottom-44 right-16 w-1 h-1 bg-emerald-300 rounded-full shadow-[0_0_6px_#6ee7b7]" />
+          <div className="absolute bottom-28 left-20 w-1.5 h-1.5 bg-white rounded-full shadow-[0_0_8px_#ffffff] animate-ping" />
+        </div>
+
+        {/* Subtle iOS 27 Quantum Glass Watermark */}
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 text-center text-white/15 text-[8px] font-mono tracking-[0.3em] uppercase pointer-events-none">
+          iOS 27 • Quantum Intelligence
+        </div>
+
+        {/* Dynamic readability scrim */}
+        <div
+          className={`absolute inset-0 pointer-events-none ${
+            isLockScreen
+              ? 'bg-gradient-to-b from-black/50 via-transparent to-black/75'
+              : 'bg-gradient-to-b from-black/35 via-transparent to-black/55'
+          }`}
+        />
+      </div>
+    );
+  }
+
+  // 4. IOS 27 CYBER AURORA
+  if (wallpaper === 'ios27_aurora' || wallpaper === 'aurora') {
+    return (
+      <div className={`absolute inset-0 overflow-hidden select-none pointer-events-none ${className}`}>
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              'radial-gradient(ellipse at 80% 20%, #10b981 0%, #064e3b 25%, #022c22 45%, #020617 80%)'
+          }}
+        />
+        {/* Luminescent undulating Aurora curtain */}
+        <div className="absolute top-10 -left-10 w-[140%] h-[70%] bg-gradient-to-r from-emerald-400/30 via-teal-300/25 to-indigo-500/20 blur-2xl transform -rotate-6 animate-pulse" />
+        <div className="absolute top-44 -right-10 w-[120%] h-[60%] bg-gradient-to-l from-fuchsia-500/25 via-violet-400/20 to-transparent blur-3xl transform rotate-12" />
+
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 text-center text-emerald-300/15 text-[8px] font-mono tracking-[0.3em] uppercase pointer-events-none">
+          iOS 27 • Cyber Aurora
+        </div>
+
+        <div
+          className={`absolute inset-0 pointer-events-none ${
+            isLockScreen
+              ? 'bg-gradient-to-b from-black/50 via-transparent to-black/75'
+              : 'bg-gradient-to-b from-black/35 via-transparent to-black/55'
+          }`}
+        />
+      </div>
+    );
+  }
+
+  // 5. IOS 27 LIQUID TITANIUM PRISM
+  if (wallpaper === 'ios27_prism' || wallpaper === 'prism') {
+    return (
+      <div className={`absolute inset-0 overflow-hidden select-none pointer-events-none ${className}`}>
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: isDarkMode
+              ? 'linear-gradient(135deg, #09090b 0%, #18181b 40%, #27272a 70%, #09090b 100%)'
+              : 'linear-gradient(135deg, #f4f4f5 0%, #e4e4e7 40%, #d4d4d8 70%, #f4f4f5 100%)'
+          }}
+        />
+        {/* Chromatic prism light streaks */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_35%,rgba(236,72,153,0.35)_0%,transparent_40%),radial-gradient(circle_at_70%_65%,rgba(59,130,246,0.35)_0%,transparent_40%),radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.3)_0%,transparent_50%)] blur-xl" />
+        <div className="absolute top-1/4 left-1/4 w-40 h-40 rounded-full border border-white/20 bg-white/5 backdrop-blur-md shadow-[0_0_50px_rgba(255,255,255,0.15)] transform rotate-45" />
+
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 text-center text-white/20 text-[8px] font-mono tracking-[0.3em] uppercase pointer-events-none">
+          iOS 27 • Liquid Prism
+        </div>
+
+        <div
+          className={`absolute inset-0 pointer-events-none ${
+            isLockScreen
+              ? 'bg-gradient-to-b from-black/50 via-transparent to-black/75'
+              : 'bg-gradient-to-b from-black/35 via-transparent to-black/55'
+          }`}
+        />
+      </div>
+    );
+  }
+
+  // 6. NEON
   if (wallpaper === 'neon') {
     return (
       <div

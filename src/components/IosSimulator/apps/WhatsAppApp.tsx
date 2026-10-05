@@ -230,7 +230,7 @@ export const WhatsAppApp: React.FC<WhatsAppAppProps> = ({
       avatarBg: 'bg-gradient-to-tr from-blue-500 to-cyan-500',
       isGroup: true,
       online: false,
-      lastSeen: 'Alex, Rohan, Sarah, Priya...',
+      lastSeen: 'Alex, Vikram, Sarah, Priya...',
       unreadCount: 1,
       messages: [
         {
@@ -250,7 +250,7 @@ export const WhatsAppApp: React.FC<WhatsAppAppProps> = ({
         {
           id: 'g3',
           sender: 'them',
-          text: 'Rohan: WhatsApp in this simulator feels like the real thing.',
+          text: 'Vikram: WhatsApp in this simulator feels like the real thing.',
           time: '9:50 AM',
           status: 'read'
         }
@@ -315,7 +315,7 @@ export const WhatsAppApp: React.FC<WhatsAppAppProps> = ({
     },
     {
       id: 'c5',
-      name: 'Rohan R. Potdar',
+      name: 'Vikram Sen',
       avatar: '⚡',
       avatarBg: 'bg-gradient-to-tr from-red-500 to-orange-500',
       online: true,
@@ -337,7 +337,7 @@ export const WhatsAppApp: React.FC<WhatsAppAppProps> = ({
         {
           id: 'r2',
           sender: 'me',
-          text: 'Thanks Rohan! Just installed WhatsApp so all options work properly.',
+          text: 'Thanks Vikram! Just installed WhatsApp so all options work properly.',
           time: '10:02 AM',
           status: 'read'
         }
@@ -368,7 +368,7 @@ export const WhatsAppApp: React.FC<WhatsAppAppProps> = ({
     },
     {
       id: 'cl3',
-      name: 'Rohan R. Potdar',
+      name: 'Vikram Sen',
       avatar: '⚡',
       avatarBg: 'bg-orange-500',
       type: 'outgoing',

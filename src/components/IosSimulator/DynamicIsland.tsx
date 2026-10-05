@@ -15,6 +15,8 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({ state, onUpdateSta
     state.dynamicIslandState === 'expanded_music' ||
     state.dynamicIslandState === 'expanded_call';
 
+  const isSmall = state.dynamicIslandSize !== 'standard';
+
   const handleIslandClick = () => {
     if (state.isTimerRunning) {
       if (state.dynamicIslandState === 'expanded_timer') {
@@ -71,14 +73,21 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({ state, onUpdateSta
   };
 
   return (
-    <div className="absolute top-2.5 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ease-out select-none">
+    <div className="absolute top-[10px] left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ease-out select-none">
       <div
         onClick={handleIslandClick}
-        className={`bg-black text-white rounded-full shadow-2xl flex items-center justify-between transition-all duration-300 cursor-pointer overflow-hidden border border-neutral-800 ${
+        title={isSmall ? "Dynamic Island (Small)" : "Dynamic Island"}
+        className={`bg-black text-white rounded-full shadow-lg flex items-center justify-between transition-all duration-300 cursor-pointer overflow-hidden border border-black/80 ring-[0.5px] ring-white/10 ${
           isExpanded
-            ? 'w-[280px] h-[96px] rounded-[32px] p-3'
+            ? isSmall
+              ? 'w-[268px] h-[86px] rounded-[28px] p-2.5'
+              : 'w-[280px] h-[96px] rounded-[32px] p-3'
             : state.isTimerRunning || state.isPlayingMusic
-            ? 'w-[185px] h-[34px] px-3'
+            ? isSmall
+              ? 'w-[148px] h-[22px] px-2'
+              : 'w-[185px] h-[34px] px-3'
+            : isSmall
+            ? 'w-[72px] h-[20px] px-1.5 hover:scale-[1.03] active:scale-95'
             : 'w-[95px] h-[28px] px-2 hover:w-[105px]'
         }`}
       >
@@ -145,34 +154,40 @@ export const DynamicIsland: React.FC<DynamicIslandProps> = ({ state, onUpdateSta
         {!isExpanded && (
           <>
             {state.isTimerRunning ? (
-              <div className="w-full flex items-center justify-between text-amber-400">
+              <div className={`w-full flex items-center justify-between text-amber-400 ${isSmall ? 'px-0.5' : ''}`}>
                 <div className="flex items-center gap-1.5">
-                  <TimerIcon className="w-3.5 h-3.5 animate-spin-slow" />
-                  <span className="text-[11px] font-semibold">Timer</span>
+                  <TimerIcon className={`${isSmall ? 'w-2.5 h-2.5' : 'w-3.5 h-3.5'} animate-spin-slow`} />
+                  <span className={`${isSmall ? 'text-[9.5px]' : 'text-[11px]'} font-semibold`}>Timer</span>
                 </div>
-                <span className="font-mono text-xs font-bold">{formatTimer(state.timerSecondsRemaining)}</span>
+                <span className={`font-mono ${isSmall ? 'text-[10.5px]' : 'text-xs'} font-bold`}>
+                  {formatTimer(state.timerSecondsRemaining)}
+                </span>
               </div>
             ) : state.isPlayingMusic ? (
-              <div className="w-full flex items-center justify-between text-white">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-4 h-4 rounded-sm bg-rose-500 flex items-center justify-center text-[8px]">
+              <div className={`w-full flex items-center justify-between text-white ${isSmall ? 'px-0.5' : ''}`}>
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <div className={`${isSmall ? 'w-3.5 h-3.5 text-[7px]' : 'w-4 h-4 text-[8px]'} rounded-xs bg-rose-500 flex items-center justify-center shrink-0`}>
                     🎵
                   </div>
-                  <span className="text-[10px] text-neutral-300 font-medium truncate max-w-[80px]">
+                  <span className={`${isSmall ? 'text-[9px] max-w-[65px]' : 'text-[10px] max-w-[80px]'} text-neutral-300 font-medium truncate`}>
                     {state.currentSong.title}
                   </span>
                 </div>
-                <div className="flex items-center gap-0.5">
-                  <span className="w-0.5 h-2.5 bg-green-400 rounded-full animate-bounce" />
-                  <span className="w-0.5 h-3.5 bg-green-400 rounded-full animate-bounce delay-100" />
-                  <span className="w-0.5 h-2 bg-green-400 rounded-full animate-bounce delay-200" />
+                <div className="flex items-center gap-0.5 shrink-0">
+                  <span className={`${isSmall ? 'w-0.5 h-2' : 'w-0.5 h-2.5'} bg-green-400 rounded-full animate-bounce`} />
+                  <span className={`${isSmall ? 'w-0.5 h-2.5' : 'w-0.5 h-3.5'} bg-green-400 rounded-full animate-bounce delay-100`} />
+                  <span className={`${isSmall ? 'w-0.5 h-1.5' : 'w-0.5 h-2'} bg-green-400 rounded-full animate-bounce delay-200`} />
                 </div>
               </div>
             ) : (
-              /* Idle sensor dot */
-              <div className="w-full flex items-center justify-between px-0.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-neutral-900 ring-1 ring-neutral-800/80" />
-                <div className="w-2 h-2 rounded-full bg-neutral-900" />
+              /* Idle compact hardware sensors: TrueDepth camera & FaceID sensor */
+              <div className="w-full flex items-center justify-between px-1">
+                {/* Left: Micro sensor dot */}
+                <div className={`${isSmall ? 'w-1.5 h-1.5' : 'w-2.5 h-2.5'} rounded-full bg-[#0a0a0d] ring-[0.5px] ring-neutral-800/40`} />
+                {/* Right: Camera lens with subtle optical reflex */}
+                <div className={`${isSmall ? 'w-2.5 h-2.5' : 'w-2 h-2'} rounded-full bg-[#07070a] ring-[0.5px] ring-neutral-800/70 flex items-center justify-center`}>
+                  <div className={`${isSmall ? 'w-1 h-1' : 'w-0.5 h-0.5'} rounded-full bg-[#12162a] ring-[0.5px] ring-indigo-900/30`} />
+                </div>
               </div>
             )}
           </>

@@ -32,10 +32,17 @@ import {
   Edit2,
   Scan,
   ShieldCheck,
-  Fingerprint
+  Fingerprint,
+  Apple,
+  Download,
+  Cpu,
+  Layers,
+  Activity,
+  CheckCircle
 } from 'lucide-react';
+import confetti from 'canvas-confetti';
 import { SimulatorState } from '../../../types';
-import { playDtmfTone, playVolumeStepSound, playUnlockSound, playLockSound } from '../../../utils/audioUtils';
+import { playDtmfTone, playVolumeStepSound, playUnlockSound, playLockSound, playBootChimeSound } from '../../../utils/audioUtils';
 import { WallpaperBackground } from '../WallpaperBackground';
 import { useLiveClock } from '../../../utils/dateTime';
 
@@ -52,6 +59,12 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
   const [fakeName, setFakeName] = useState(state.appleId.name);
   const [fakeEmail, setFakeEmail] = useState(state.appleId.email);
   const [fakePhone, setFakePhone] = useState(state.appleId.phone);
+
+  // iOS 27 Installation and update state
+  const [isInstallingUpdate, setIsInstallingUpdate] = useState(false);
+  const [updateProgress, setUpdateProgress] = useState(0);
+  const [updateStepText, setUpdateStepText] = useState('');
+  const [installSuccessToast, setInstallSuccessToast] = useState(false);
 
   // Subpage toggles
   const toggleWifi = () => onUpdateState((s) => ({ ...s, isWifiOn: !s.isWifiOn }));
@@ -390,6 +403,57 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
               onChange={(e) => onUpdateState((s) => ({ ...s, brightness: Number(e.target.value) }))}
               className="w-full accent-blue-500 cursor-pointer"
             />
+          </div>
+
+          {/* Dynamic Island Size Selector */}
+          <div className={`rounded-2xl p-4 shadow-xs space-y-3 ${state.isDarkMode ? 'bg-neutral-900' : 'bg-white'}`}>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] uppercase font-bold text-neutral-400">Dynamic Island Pill Size</span>
+              <span className="text-[10px] font-semibold text-blue-500">
+                {state.dynamicIslandSize === 'standard' ? 'Standard' : 'Small (Default)'}
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 text-center">
+              <button
+                onClick={() => onUpdateState((s) => ({ ...s, dynamicIslandSize: 'small' }))}
+                className={`p-3 rounded-2xl border-2 flex flex-col items-center gap-2 cursor-pointer transition-all ${
+                  state.dynamicIslandSize !== 'standard'
+                    ? 'border-blue-500 bg-blue-500/10 text-blue-500 font-bold'
+                    : state.isDarkMode
+                    ? 'border-neutral-700 bg-neutral-800 text-neutral-300'
+                    : 'border-neutral-300 bg-neutral-100 text-neutral-600'
+                }`}
+              >
+                <div className="w-[72px] h-[20px] rounded-full bg-black border border-neutral-700 flex items-center justify-between px-1.5 shadow-xs">
+                  <div className="w-1.5 h-1.5 rounded-full bg-neutral-800" />
+                  <div className="w-2 h-2 rounded-full bg-neutral-800" />
+                </div>
+                <div className="text-center">
+                  <p className="text-xs font-bold">Small</p>
+                  <p className="text-[9px] opacity-75">Sleek (Screenshot)</p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => onUpdateState((s) => ({ ...s, dynamicIslandSize: 'standard' }))}
+                className={`p-3 rounded-2xl border-2 flex flex-col items-center gap-2 cursor-pointer transition-all ${
+                  state.dynamicIslandSize === 'standard'
+                    ? 'border-blue-500 bg-blue-500/10 text-blue-500 font-bold'
+                    : state.isDarkMode
+                    ? 'border-neutral-700 bg-neutral-800 text-neutral-300'
+                    : 'border-neutral-300 bg-neutral-100 text-neutral-600'
+                }`}
+              >
+                <div className="w-[90px] h-[26px] rounded-full bg-black border border-neutral-700 flex items-center justify-between px-2 shadow-xs">
+                  <div className="w-2 h-2 rounded-full bg-neutral-800" />
+                  <div className="w-2 h-2 rounded-full bg-neutral-800" />
+                </div>
+                <div className="text-center">
+                  <p className="text-xs font-bold">Standard</p>
+                  <p className="text-[9px] opacity-75">Classic</p>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       </div>
