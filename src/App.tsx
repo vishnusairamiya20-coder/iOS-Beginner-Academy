@@ -37,6 +37,12 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
   isAppLibraryOpen: false,
   isJiggleMode: false,
   activeScreenPage: 0,
+
+  // iPhone Duo Foldable State
+  isFolded: false, // start unfolded to showcase the dual-screen foldable experience
+  foldAngle: 180, // 180° dual-screen flat canvas
+  duoRightApp: null, // null shows Home Screen Page 2 on right display
+  duoSpanFull: false,
   
   isLocked: false,
   isScreenOff: false,
@@ -422,11 +428,17 @@ export default function App() {
       </div>
 
       {/* Main Container Layout */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
+      <main className={`flex-1 w-full mx-auto px-4 sm:px-6 py-6 transition-all duration-300 ${
+        simulatorState.isFolded ? 'max-w-7xl' : 'max-w-[1480px]'
+      }`}>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Side: Learning Content / Interactive Guides */}
           <div
-            className={`lg:col-span-7 space-y-6 ${
+            className={`${
+              simulatorState.isFolded
+                ? 'lg:col-span-7'
+                : 'lg:col-span-5 xl:col-span-5'
+            } space-y-6 ${
               mobileTab === 'simulator' ? 'hidden lg:block' : 'block'
             }`}
           >
@@ -455,20 +467,26 @@ export default function App() {
             {activeView === 'quiz' && <QuizModal />}
           </div>
 
-          {/* Right Side: Interactive iPhone Simulator Sandbox */}
+          {/* Right Side: Interactive iPhone Duo Simulator Sandbox */}
           <div
-            className={`lg:col-span-5 flex flex-col items-center lg:sticky lg:top-20 ${
+            className={`${
+              simulatorState.isFolded
+                ? 'lg:col-span-5'
+                : 'lg:col-span-7 xl:col-span-7'
+            } flex flex-col items-center lg:sticky lg:top-16 ${
               mobileTab === 'guide' ? 'hidden lg:flex' : 'flex'
             }`}
           >
             <div className="w-full flex items-center justify-between px-2 mb-2">
               <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping" />
                 <span className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                  Interactive iOS Simulator
+                  {simulatorState.isFolded ? 'iPhone Duo • Cover Screen' : 'iPhone Duo • Dual Screen Foldable'}
                 </span>
               </div>
-              <span className="text-[11px] text-neutral-400">Live Touch & Gestures</span>
+              <span className="text-[11px] text-neutral-400">
+                {simulatorState.isFolded ? '0° Folded' : `${simulatorState.foldAngle}° Titanium Hinge`}
+              </span>
             </div>
 
             {/* Simulated iPhone Frame */}

@@ -72,6 +72,12 @@ export interface SimulatorState {
   isJiggleMode: boolean;
   activeScreenPage: number; // 0: Home page 1, 1: Home page 2, 2: App Library
 
+  // iPhone Duo Foldable State
+  isFolded: boolean; // true = compact single cover screen, false = dual screen unfolded
+  foldAngle: number; // 0 = folded cover, 115 = flex/laptop mode, 180 = flat dual screen
+  duoRightApp: IosAppId | null; // secondary app on right display in unfolded mode
+  duoSpanFull: boolean; // whether a single app spans across both displays
+
   // Power & Lock screen
   isLocked: boolean;
   isScreenOff: boolean;

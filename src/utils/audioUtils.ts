@@ -59,11 +59,32 @@ export function playDtmfTone(key: string, duration = 0.15) {
   osc1.connect(gain);
   osc2.connect(gain);
   gain.connect(ctx.destination);
-
   osc1.start(now);
   osc2.start(now);
   osc1.stop(now + duration);
   osc2.stop(now + duration);
+}
+
+// iPhone Duo Titanium Hinge Snap Tactile Sound
+export function playFoldHingeSnapSound() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(220, now);
+  osc.frequency.exponentialRampToValueAtTime(80, now + 0.08);
+
+  gain.gain.setValueAtTime(0.2, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start(now);
+  osc.stop(now + 0.08);
 }
 
 // Camera Shutter Snap Sound

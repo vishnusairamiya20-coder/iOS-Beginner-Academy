@@ -524,16 +524,19 @@ export const SettingsApp: React.FC<SettingsAppProps> = ({ state, onUpdateState }
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <div className={`rounded-2xl divide-y divide-neutral-200 dark:divide-neutral-800 shadow-xs ${state.isDarkMode ? 'bg-neutral-900' : 'bg-white'}`}>
             {[
-              { label: 'Name', value: 'iPhone 16 Pro' },
-              { label: 'iOS Version', value: '18.2 (22C150)' },
+              { label: 'Name', value: 'iPhone Duo Fold' },
+              { label: 'iOS Version', value: '18.2 Duo Edition' },
               { label: 'OS Architect & Founder', value: 'Vishnu Sai Ramiya' },
               { label: 'Academic Standing', value: 'Class 9 Scholar & AI Developer' },
               { label: 'Founder Gmail', value: 'vishnusairamiya20@gmail.com' },
-              { label: 'Model Name', value: 'iPhone 16 Pro' },
-              { label: 'Model Number', value: 'MYWP3LL/A' },
+              { label: 'Model Name', value: 'iPhone Duo (Foldable Ultra)' },
+              { label: 'Form Factor', value: 'Dual-Screen Book Fold' },
+              { label: 'Hinge Tech', value: 'Aerospace Liquidmetal Fluid Hinge' },
+              { label: 'Displays', value: 'Dual 6.3" ProMotion XDR + 8.1" Inner' },
+              { label: 'Model Number', value: 'DUO-2026-F' },
               { label: 'Serial Number', value: 'F2LZ19XP0D' },
-              { label: 'Capacity', value: '256 GB' },
-              { label: 'Available', value: '178.4 GB' },
+              { label: 'Capacity', value: '512 GB' },
+              { label: 'Available', value: '418.4 GB' },
               { label: 'Wi-Fi Address', value: '7C:11:CB:59:E4:31' },
               { label: 'Bluetooth', value: '7C:11:CB:59:E4:32' }
             ].map((item) => (
