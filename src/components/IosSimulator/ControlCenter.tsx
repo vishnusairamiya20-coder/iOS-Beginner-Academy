@@ -18,7 +18,8 @@ import {
   Camera,
   Play,
   Pause,
-  Power
+  Power,
+  Sparkles
 } from 'lucide-react';
 import { SimulatorState } from '../../types';
 import { startMusicSynthesis, stopMusicSynthesis, playVolumeStepSound } from '../../utils/audioUtils';
@@ -81,10 +82,24 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
       className="absolute inset-0 bg-black/45 backdrop-blur-2xl z-40 p-4 pt-12 flex flex-col justify-between select-none text-white font-sans animate-fade-in"
     >
       <div className="space-y-3" onClick={(e) => e.stopPropagation()}>
-        {/* iOS 18 Top Utility Bar with Power Button */}
-        {onOpenPowerMenu && (
-          <div className="flex items-center justify-between px-1 -mb-1">
+        {/* iOS 18/27 Top Utility Bar with Siri & Power Button */}
+        <div className="flex items-center justify-between px-1 -mb-1">
+          <div className="flex items-center gap-2">
             <span className="text-[10px] font-semibold tracking-wider text-white/50 uppercase">Control Center</span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose();
+                onUpdateState((s) => ({ ...s, isSiriOpen: true }));
+              }}
+              title="Launch Siri with Apple Intelligence"
+              className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-cyan-500/30 via-purple-500/30 to-pink-500/30 border border-purple-400/40 text-purple-200 hover:text-white text-[9.5px] font-bold shadow-xs active:scale-95 cursor-pointer"
+            >
+              <Sparkles className="w-3 h-3 text-purple-300 animate-pulse" />
+              <span>Siri</span>
+            </button>
+          </div>
+          {onOpenPowerMenu && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -96,8 +111,8 @@ export const ControlCenter: React.FC<ControlCenterProps> = ({
             >
               <Power className="w-3.5 h-3.5" />
             </button>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Top Control Grid (2x2 major modules) */}
         <div className="grid grid-cols-2 gap-3">

@@ -38,7 +38,8 @@ export const AppSwitcher: React.FC<AppSwitcherProps> = ({
     whatsapp: { name: 'WhatsApp', icon: '💬' },
     paytm: { name: 'Paytm', icon: '💳' },
     amazon: { name: 'Amazon', icon: '📦' },
-    gemini: { name: 'Gemini', icon: '✦' }
+    gemini: { name: 'Gemini', icon: '✦' },
+    blinkit: { name: 'Blinkit', icon: '⚡' }
   };
 
   const rawApps = state.recentApps.length > 0

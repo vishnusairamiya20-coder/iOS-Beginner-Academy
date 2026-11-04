@@ -274,6 +274,21 @@ const STORE_CATALOG: StoreApp[] = [
     screenshots: ['Prime 1-Day Free Delivery', 'Real-Time Order Tracking', 'Instant 1-Click Buy Now', 'Exclusive Prime Big Deals']
   },
   {
+    id: 'blinkit',
+    name: 'Blinkit: 10 Min Grocery',
+    subtitle: 'Everything delivered in 10 mins',
+    category: 'Productivity',
+    icon: '⚡',
+    iconBg: 'from-[#F7D300] via-[#F7D300] to-[#0C831F]',
+    rating: 4.8,
+    reviewsCount: '28M',
+    developer: 'Blink Commerce Pvt Ltd',
+    ageRating: '4+',
+    sizeMB: 78,
+    description: 'Get groceries, fresh milk, vegetables, fruits, snacks, instant noodles, and electronics delivered to your doorstep in 10 minutes. Live map tracking with instant checkout.',
+    screenshots: ['10-Minute Delivery to Doorstep', 'Fresh Farm Vegetables & Milk', 'Midnight Munchies & Cold Drinks', 'Live Delivery Partner GPS Tracking']
+  },
+  {
     id: 'gemini',
     name: 'Google Gemini',
     subtitle: 'Your AI Assistant on iOS',

@@ -50,6 +50,7 @@ import { WhatsAppApp } from './apps/WhatsAppApp';
 import { PaytmApp } from './apps/PaytmApp';
 import { AmazonApp } from './apps/AmazonApp';
 import { GeminiApp } from './apps/GeminiApp';
+import { BlinkitApp } from './apps/BlinkitApp';
 import { WallpaperBackground } from './WallpaperBackground';
 import { PowerMenuOverlay } from './PowerMenuOverlay';
 import { BootScreen } from './BootScreen';
@@ -1000,7 +1001,7 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
                 )}
 
                 {state.currentApp === 'safari' && (
-                  <SafariApp state={state} />
+                  <SafariApp state={state} onOpenApp={openApp} />
                 )}
 
                 {state.currentApp === 'chrome' && (
@@ -1096,6 +1097,15 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
                     onClose={goHome}
                   />
                 )}
+
+                {state.currentApp === 'blinkit' && (
+                  <BlinkitApp
+                    state={state}
+                    onUpdateState={onUpdateState}
+                    onOpenApp={openApp}
+                    onClose={goHome}
+                  />
+                )}
               </>
             )}
 
@@ -1178,7 +1188,17 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
         </div>
 
         {/* Volume & Power Button Cluster */}
-        <div className="grid grid-cols-5 gap-1.5">
+        <div className="grid grid-cols-6 gap-1">
+          {/* Siri Button */}
+          <button
+            onClick={() => onUpdateState((s) => ({ ...s, isSiriOpen: true }))}
+            title="Launch Siri with Apple Intelligence"
+            className="flex flex-col items-center justify-center p-1.5 rounded-xl bg-gradient-to-b from-indigo-950/80 to-purple-950/80 border border-purple-500/40 hover:border-purple-400 active:scale-95 text-purple-300 text-[10px] font-medium transition-all cursor-pointer shadow-xs"
+          >
+            <Sparkles className="w-3.5 h-3.5 mb-0.5 text-purple-300 animate-pulse" />
+            <span>Siri</span>
+          </button>
+
           {/* Action Button */}
           <button
             onClick={handleActionButtonPress}

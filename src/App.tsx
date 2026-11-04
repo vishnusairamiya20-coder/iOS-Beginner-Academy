@@ -128,7 +128,7 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
     { id: 'p8', emoji: '🌃', title: 'Tokyo Skyline at Night', date: 'Aug 10, 10:15 PM', isFavorite: true }
   ],
 
-  installedApps: ['instagram', 'whatsapp', 'youtube', 'pinterest', 'tiktok', 'spotify', 'netflix', 'chatgpt', 'paytm', 'amazon', 'gemini'],
+  installedApps: ['instagram', 'whatsapp', 'youtube', 'pinterest', 'tiktok', 'spotify', 'netflix', 'chatgpt', 'paytm', 'amazon', 'gemini', 'blinkit'],
 
   dynamicIslandState: 'idle',
   dynamicIslandSize: 'small',
@@ -139,7 +139,7 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
     title: 'Anti-Hero',
     artist: 'Taylor Swift'
   },
-  recentApps: ['gemini', 'amazon', 'paytm', 'settings', 'whatsapp', 'messages', 'camera', 'photos', 'safari', 'phone', 'appstore'],
+  recentApps: ['blinkit', 'gemini', 'amazon', 'paytm', 'settings', 'whatsapp', 'messages', 'camera', 'photos', 'safari', 'phone', 'appstore'],
   notifications: [
     {
       id: 'n-ios27',

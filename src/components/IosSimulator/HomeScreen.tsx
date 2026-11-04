@@ -136,6 +136,23 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       )
     },
     {
+      id: 'blinkit',
+      name: 'Blinkit',
+      badge: '10m',
+      iconBg: 'bg-[#F7D300] shadow-md border border-amber-300/60',
+      iconElement: (
+        <div className="w-full h-full flex flex-col items-center justify-center p-1 relative overflow-hidden select-none">
+          <div className="flex items-center tracking-tighter leading-none font-black text-[13px]">
+            <span className="text-black">blink</span>
+            <span className="text-[#0C831F]">it</span>
+          </div>
+          <span className="text-[7px] font-extrabold text-[#0C831F] bg-black/5 px-1 rounded-full uppercase tracking-wider mt-0.5">
+            10 MINS
+          </span>
+        </div>
+      )
+    },
+    {
       id: 'gemini',
       name: 'Gemini',
       badge: '✦',

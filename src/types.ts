@@ -21,7 +21,8 @@ export type IosAppId =
   | 'whatsapp'
   | 'paytm'
   | 'amazon'
-  | 'gemini';
+  | 'gemini'
+  | 'blinkit';
 
 export interface AppIconInfo {
   id: IosAppId;
