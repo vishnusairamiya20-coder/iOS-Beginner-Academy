@@ -33,7 +33,17 @@ export const SpotlightSearch: React.FC<SpotlightSearchProps> = ({
     { id: 'paytm', name: 'Paytm', icon: '💳', category: 'Finance & UPI' },
     { id: 'amazon', name: 'Amazon Shopping', icon: '📦', category: 'Shopping' },
     { id: 'gemini', name: 'Google Gemini', icon: '✦', category: 'Productivity & AI' },
-    { id: 'blinkit', name: 'Blinkit: 10 Min Grocery', icon: '⚡', category: 'Shopping & Delivery' }
+    { id: 'blinkit', name: 'Blinkit: 10 Min Grocery', icon: '⚡', category: 'Shopping & Delivery' },
+    { id: 'facetime', name: 'FaceTime', icon: '📹', category: 'Communication' },
+    { id: 'calendar', name: 'Calendar', icon: '📅', category: 'Productivity' },
+    { id: 'mail', name: 'Mail', icon: '✉️', category: 'Communication' },
+    { id: 'notes', name: 'Notes', icon: '📝', category: 'Productivity' },
+    { id: 'maps', name: 'Apple Maps', icon: '🗺️', category: 'Navigation & Travel' },
+    { id: 'appletv', name: 'Apple TV', icon: 'tv', category: 'Entertainment' },
+    { id: 'news', name: 'Apple News', icon: '📰', category: 'News' },
+    { id: 'rocket', name: 'Booster Turbo', icon: '🚀', category: 'Utilities' },
+    { id: 'health', name: 'Health', icon: '❤️', category: 'Health & Fitness' },
+    { id: 'wallet', name: 'Apple Wallet', icon: '💳', category: 'Finance & Cards' }
   ];
 
   const filteredApps = query.trim()

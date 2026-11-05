@@ -39,7 +39,14 @@ export const AppSwitcher: React.FC<AppSwitcherProps> = ({
     paytm: { name: 'Paytm', icon: '💳' },
     amazon: { name: 'Amazon', icon: '📦' },
     gemini: { name: 'Gemini', icon: '✦' },
-    blinkit: { name: 'Blinkit', icon: '⚡' }
+    blinkit: { name: 'Blinkit', icon: '⚡' },
+    facetime: { name: 'FaceTime', icon: '📹' },
+    calendar: { name: 'Calendar', icon: '📅' },
+    mail: { name: 'Mail', icon: '✉️' },
+    appletv: { name: 'Apple TV', icon: 'tv' },
+    news: { name: 'News', icon: '📰' },
+    rocket: { name: 'Booster', icon: '🚀' },
+    wallet: { name: 'Wallet', icon: '💳' }
   };
 
   const rawApps = state.recentApps.length > 0

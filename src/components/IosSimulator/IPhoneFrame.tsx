@@ -60,6 +60,18 @@ import { PaytmApp } from './apps/PaytmApp';
 import { AmazonApp } from './apps/AmazonApp';
 import { GeminiApp } from './apps/GeminiApp';
 import { BlinkitApp } from './apps/BlinkitApp';
+import {
+  FaceTimeApp,
+  CalendarApp,
+  MailApp,
+  NotesApp,
+  MapsApp,
+  AppleTvApp,
+  NewsApp,
+  RocketApp,
+  HealthApp,
+  WalletApp
+} from './apps/NewApps';
 import { WallpaperBackground } from './WallpaperBackground';
 import { PowerMenuOverlay } from './PowerMenuOverlay';
 import { BootScreen } from './BootScreen';
@@ -730,6 +742,16 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
     if (appId === 'amazon') return <AmazonApp state={state} onUpdateState={onUpdateState} onOpenApp={openApp} onClose={isRightScreen ? handleRightHomeBarClick : goHome} />;
     if (appId === 'gemini') return <GeminiApp state={state} onUpdateState={onUpdateState} onOpenApp={openApp} onClose={isRightScreen ? handleRightHomeBarClick : goHome} />;
     if (appId === 'blinkit') return <BlinkitApp state={state} onUpdateState={onUpdateState} onOpenApp={openApp} onClose={isRightScreen ? handleRightHomeBarClick : goHome} />;
+    if (appId === 'facetime') return <FaceTimeApp state={state} onUpdateState={onUpdateState} onOpenApp={openApp} onClose={isRightScreen ? handleRightHomeBarClick : goHome} />;
+    if (appId === 'calendar') return <CalendarApp state={state} onUpdateState={onUpdateState} onOpenApp={openApp} onClose={isRightScreen ? handleRightHomeBarClick : goHome} />;
+    if (appId === 'mail') return <MailApp state={state} onUpdateState={onUpdateState} onOpenApp={openApp} onClose={isRightScreen ? handleRightHomeBarClick : goHome} />;
+    if (appId === 'notes') return <NotesApp state={state} onUpdateState={onUpdateState} onOpenApp={openApp} onClose={isRightScreen ? handleRightHomeBarClick : goHome} />;
+    if (appId === 'maps') return <MapsApp state={state} onUpdateState={onUpdateState} onOpenApp={openApp} onClose={isRightScreen ? handleRightHomeBarClick : goHome} />;
+    if (appId === 'appletv') return <AppleTvApp state={state} onUpdateState={onUpdateState} onOpenApp={openApp} onClose={isRightScreen ? handleRightHomeBarClick : goHome} />;
+    if (appId === 'news') return <NewsApp state={state} onUpdateState={onUpdateState} onOpenApp={openApp} onClose={isRightScreen ? handleRightHomeBarClick : goHome} />;
+    if (appId === 'rocket') return <RocketApp state={state} onUpdateState={onUpdateState} onOpenApp={openApp} onClose={isRightScreen ? handleRightHomeBarClick : goHome} />;
+    if (appId === 'health') return <HealthApp state={state} onUpdateState={onUpdateState} onOpenApp={openApp} onClose={isRightScreen ? handleRightHomeBarClick : goHome} />;
+    if (appId === 'wallet') return <WalletApp state={state} onUpdateState={onUpdateState} onOpenApp={openApp} onClose={isRightScreen ? handleRightHomeBarClick : goHome} />;
     return null;
   };
 
@@ -819,7 +841,7 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
       {/* 1. FOLDED MODE: Single Compact Cover Screen (with Titanium Spine Accent) */}
       {/* ========================================================================= */}
       {isFolded ? (
-        <div className="relative w-[340px] h-[680px] bg-neutral-900 rounded-[55px] p-3 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.1),inset_0_0_0_3px_#404040,inset_0_0_0_5px_#171717] z-10 flex flex-col">
+        <div className="relative w-[365px] h-[710px] bg-neutral-900 rounded-[55px] p-2.5 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.1),inset_0_0_0_3px_#404040,inset_0_0_0_5px_#171717] z-10 flex flex-col">
           {/* Folded Hinge Spine Accent on Left Outer Rail */}
           <div
             onClick={() => setFoldMode('unfolded')}
@@ -1150,7 +1172,7 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
             {/* LEFT DISPLAY PANEL (Primary Display / Home Page 1) */}
             {/* ---------------------------------------------------- */}
             <div
-              className={`relative w-[320px] h-[660px] bg-black rounded-l-[44px] rounded-r-[18px] overflow-hidden flex flex-col border-y border-l border-neutral-800 transition-all duration-500 shadow-2xl ${
+              className={`relative w-[340px] h-[690px] bg-black rounded-l-[44px] rounded-r-[18px] overflow-hidden flex flex-col border-y border-l border-neutral-800 transition-all duration-500 shadow-2xl ${
                 isFlexMode ? 'origin-right [transform:rotateY(14deg)]' : ''
               }`}
             >
@@ -1245,7 +1267,7 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
             <div
               onClick={() => setFoldMode(isFlexMode ? 'unfolded' : 'flex')}
               title={`Titanium Liquidmetal Hinge (${state.foldAngle}°)\nClick to toggle Flex/Flat angle!`}
-              className="relative w-[22px] h-[660px] mx-0.5 rounded-sm bg-gradient-to-r from-neutral-800 via-neutral-400 to-neutral-800 border-x border-neutral-700/60 shadow-2xl cursor-pointer flex flex-col items-center justify-between py-4 group select-none hover:brightness-110 transition-all z-20"
+              className="relative w-[22px] h-[690px] mx-0.5 rounded-sm bg-gradient-to-r from-neutral-800 via-neutral-400 to-neutral-800 border-x border-neutral-700/60 shadow-2xl cursor-pointer flex flex-col items-center justify-between py-4 group select-none hover:brightness-110 transition-all z-20"
             >
               {/* Top precision knuckle pivot */}
               <div className="w-3.5 h-6 rounded-full bg-neutral-900 border border-white/30 flex flex-col items-center justify-center shadow-inner">
@@ -1270,7 +1292,7 @@ export const IPhoneFrame: React.FC<IPhoneFrameProps> = ({
             {/* RIGHT DISPLAY PANEL (Secondary Display / Home Page 2 / Split App) */}
             {/* ----------------------------------------------------------------- */}
             <div
-              className={`relative w-[320px] h-[660px] bg-black rounded-r-[44px] rounded-l-[18px] overflow-hidden flex flex-col border-y border-r border-neutral-800 transition-all duration-500 shadow-2xl ${
+              className={`relative w-[340px] h-[690px] bg-black rounded-r-[44px] rounded-l-[18px] overflow-hidden flex flex-col border-y border-r border-neutral-800 transition-all duration-500 shadow-2xl ${
                 isFlexMode ? 'origin-left [transform:rotateY(-14deg)]' : ''
               }`}
             >

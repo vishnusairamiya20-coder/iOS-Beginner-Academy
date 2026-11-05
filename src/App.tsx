@@ -94,7 +94,7 @@ const DEFAULT_SIMULATOR_STATE: SimulatorState = {
   volume: 70,
   batteryLevel: 94,
   isCharging: false,
-  wallpaper: 'doomsday',
+  wallpaper: 'dunes',
 
   appleId: {
     name: 'Vishnu Sai Ramiya',

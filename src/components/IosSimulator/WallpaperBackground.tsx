@@ -13,6 +13,32 @@ export const WallpaperBackground: React.FC<WallpaperBackgroundProps> = ({
   isLockScreen = false,
   className = ''
 }) => {
+  // -1. DESERT DUNES MINIMALIST NATURE WALLPAPER (Matches user screenshot)
+  if (wallpaper === 'dunes' || wallpaper === 'desert' || wallpaper === 'desert_dunes' || wallpaper === 'sand_dunes') {
+    return (
+      <div className={`absolute inset-0 overflow-hidden select-none pointer-events-none ${className}`}>
+        <img
+          src="/desert_dunes_wallpaper.jpg"
+          alt="Desert Sand Dunes Wallpaper"
+          referrerPolicy="no-referrer"
+          className="absolute inset-0 w-full h-full object-cover object-center transform scale-100"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = '/public/desert_dunes_wallpaper.jpg';
+          }}
+        />
+        {/* Soft atmospheric gradient */}
+        <div
+          className={`absolute inset-0 pointer-events-none ${
+            isLockScreen
+              ? 'bg-gradient-to-b from-black/40 via-transparent to-black/60'
+              : 'bg-gradient-to-b from-black/10 via-transparent to-black/25'
+          }`}
+        />
+      </div>
+    );
+  }
+
   // 0. DOOMSDAY CINEMATIC APOCALYPTIC WALLPAPER
   if (wallpaper === 'doomsday' || wallpaper === 'doomsday_wallpaper' || wallpaper === 'doomsday_apocalypse') {
     return (

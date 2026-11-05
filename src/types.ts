@@ -22,7 +22,14 @@ export type IosAppId =
   | 'paytm'
   | 'amazon'
   | 'gemini'
-  | 'blinkit';
+  | 'blinkit'
+  | 'facetime'
+  | 'calendar'
+  | 'mail'
+  | 'appletv'
+  | 'news'
+  | 'rocket'
+  | 'wallet';
 
 export interface AppIconInfo {
   id: IosAppId;
